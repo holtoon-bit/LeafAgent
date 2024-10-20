@@ -1,0 +1,34 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	implementation libs.javassist
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jar {
+	manifest {
+		attributes "Premain-Class": "leafagent.AppAgent"
+		attributes "Agent-Class": "leafagent.AppAgent"
+		attributes "Can-Redefine-Classes": "true"
+		attributes "Boot-Class-Path": "libs/javassist-3.29.2-GA.jar"
+	}
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = "leafagent.OfficialTest"
+}
