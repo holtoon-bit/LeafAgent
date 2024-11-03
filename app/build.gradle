@@ -1,12 +1,17 @@
 plugins {
     id 'application'
+    id 'maven-publish'
+    id 'java-gradle-plugin'
 }
 
 repositories {
+    gradlePluginPortal()
+    google()
     mavenCentral()
 }
 
 dependencies {
+    implementation 'com.android.tools.build:gradle-api:8.8.0-alpha08'
 	implementation libs.javassist
 }
 
@@ -16,14 +21,14 @@ java {
     }
 }
 
-jar {
-	manifest {
-		attributes "Premain-Class": "leafagent.AppAgent"
-		attributes "Agent-Class": "leafagent.AppAgent"
-		attributes "Can-Redefine-Classes": "true"
-		attributes "Boot-Class-Path": "libs/javassist-3.29.2-GA.jar"
-	}
-}
+//jar {
+//	manifest {
+//		attributes "Premain-Class": "leafagent.AppAgent"
+//		attributes "Agent-Class": "leafagent.AppAgent"
+//		attributes "Can-Redefine-Classes": "true"
+//		attributes "Boot-Class-Path": "libs/javassist-3.29.2-GA.jar"
+//	}
+//}
 
 tasks.named('test') {
     useJUnitPlatform()
@@ -32,3 +37,31 @@ tasks.named('test') {
 application {
     mainClass = "leafagent.OfficialTest"
 }
+
+group = 'leafagent'
+version = '1.0.0'
+
+gradlePlugin {
+    plugins {
+        greeting {
+            id = 'leafagent.plugin'
+            implementationClass = 'leafagent.plugin.LeafPlugin'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = 'localPluginRepository'
+            url = uri("${buildDir}/repos")
+        }
+    }
+}
+
+tasks.withType(Copy).all { duplicatesStrategy 'exclude' }
