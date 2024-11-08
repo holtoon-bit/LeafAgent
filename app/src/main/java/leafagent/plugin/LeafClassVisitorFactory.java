@@ -16,7 +16,6 @@ abstract public class LeafClassVisitorFactory implements AsmClassVisitorFactory<
 //        private Boolean debug = false;
 
         public void LeafVisitorParameters() {
-            System.out.println("FACTORY SET");
 //            this.invalidate = invalidate;
 //            this.debug = debug;
         }
@@ -48,17 +47,11 @@ abstract public class LeafClassVisitorFactory implements AsmClassVisitorFactory<
 
     @Override
     public ClassVisitor createClassVisitor(ClassContext classContext, ClassVisitor nextClassVisitor) {
-        System.out.println("CREATE VISITOR");
-        // If we return true from the isInstrumentable below, we should return a ClassVisitor that will inject our code for measuring the execution time
-        System.out.println("=> " + classContext.getCurrentClassData().getClassName());
-        if (isInstrumentable(classContext.getCurrentClassData())) {
-            System.out.println("true => " + classContext.getCurrentClassData().getClassName());
-            return new LeafAgentVisitor(nextClassVisitor);
-        }
-        return null;
+        System.out.println("<Trace with LeafAgent> ~ " + classContext.getCurrentClassData().getClassName());
+        return new LeafAgentVisitor(nextClassVisitor);
     }
 
     public boolean isInstrumentable(ClassData classData) {
-        return classData.getClassAnnotations().contains(Branch.class); // Determine if we are interested in instrumenting the given ClassData. For us it would mean a class annotated with @Dao
+        return classData.getClassAnnotations().contains(Branch.class.getName());
     }
 }

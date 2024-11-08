@@ -1,5 +1,6 @@
 package leafagent.plugin;
 
+import leafagent.LeafLogger;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -9,13 +10,10 @@ import org.objectweb.asm.Type;
 class LeafAgentMethodVisitor extends MethodVisitor {
 
     @Internal
-    private static final String COST_ANNOTATION_DESC = "Lleafagent/annotations/Branch;";
+    private static final String COST_ANNOTATION_DESC = "Lleafagent/annotations/Leaf;";
 
     @Internal
     private boolean isInjected = false;
-
-    @Internal
-    private int startTimeId;
 
     @Internal
     private String className;
@@ -27,9 +25,6 @@ class LeafAgentMethodVisitor extends MethodVisitor {
     private String desc;
 
     @Internal
-    private boolean isStaticMethod;
-
-    @Internal
     private Type[] argumentArrays;
 
     public LeafAgentMethodVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
@@ -38,14 +33,13 @@ class LeafAgentMethodVisitor extends MethodVisitor {
         this.methodName = methodName;
         this.desc = desc;
         argumentArrays = Type.getArgumentTypes(desc);
-        isStaticMethod = ((access & Opcodes.ACC_STATIC) != 0);
-        startTimeId = (int) System.currentTimeMillis();
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         if (COST_ANNOTATION_DESC.equals(desc)) {
             isInjected = true;
+            LeafLogger.createNewLeaf(methodName);
         }
         return super.visitAnnotation(desc, visible);
     }
@@ -53,32 +47,29 @@ class LeafAgentMethodVisitor extends MethodVisitor {
     @Override
     public void visitCode() {
         if (isInjected) {
+            mv.visitLdcInsn(methodName);
             mv.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
-                    "android/util/Log",
-                    "e",
-                    "(Ljava/lang/String;Ljava/lang/String;)I",
+                    Type.getInternalName(LeafLogger.class),
+                    "logStart",
+                    "(Ljava/lang/String;)V",
                     false
             );
-            mv.visitInsn(Opcodes.POP);
-            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System", "currentTimeMillis", "()J", false);
-            mv.visitIntInsn(Opcodes.LSTORE, startTimeId);
         }
     }
 
-//    @Override
-//    public void visitEnd() {
-//        mv.visitLdcInsn(className);
-//        mv.visitMethodInsn(
-//                Opcodes.INVOKESTATIC,
-//                "android/util/Log",
-//                "e",
-//                "(Ljava/lang/String;Ljava/lang/String;)I",
-//                false
-//        );
-//        mv.visitInsn(Opcodes.POP);
-//        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System", "currentTimeMillis", "()J", false);
-//        mv.visitIntInsn(Opcodes.LSTORE, endTimeId);
-//        super.visitEnd();
-//    }
+    @Override
+    public void visitInsn(int opcode) {
+        if (isInjected && opcode == Opcodes.RETURN) {
+            mv.visitLdcInsn(methodName);
+            mv.visitMethodInsn(
+                    Opcodes.INVOKESTATIC,
+                    Type.getInternalName(LeafLogger.class),
+                    "logEnd",
+                    "(Ljava/lang/String;)V",
+                    false
+            );
+        }
+        super.visitInsn(opcode);
+    }
 }

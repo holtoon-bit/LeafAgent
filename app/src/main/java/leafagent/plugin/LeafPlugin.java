@@ -16,23 +16,23 @@ public class LeafPlugin implements Plugin<Project> {
             public void execute(AppliedPlugin appliedPlugin) {
                 AndroidComponentsExtension androidComponentsExtension = project.getExtensions().getByType(AndroidComponentsExtension.class);
                 androidComponentsExtension.onVariants(
-                        androidComponentsExtension.selector().all(),
-                        new Action<Variant>() {
-                    @Override
-                    public void execute(Variant variant) {
-                        variant.getInstrumentation().transformClassesWith(
-                                LeafClassVisitorFactory.class,
-                                InstrumentationScope.PROJECT,
-                                (params) -> {
-//                                    project.getExtensions().add("leafPluginSettings124", LeafPluginExtension.class);
-//                                    LeafPluginExtension extension = (LeafPluginExtension) project.getExtensions().findByName("leafPluginSettings124");
-//                                    params.setInvalidate(System.currentTimeMillis());
-//                                    params.setTmpDir(new File(extension.tmpDir));
-                                    return null;
-                                }
-                        );
-                        variant.getInstrumentation().setAsmFramesComputationMode(FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS);
-                    }
+                    androidComponentsExtension.selector().all(),
+                    new Action<Variant>() {
+                        @Override
+                        public void execute(Variant variant) {
+                            variant.getInstrumentation().transformClassesWith(
+                                    LeafClassVisitorFactory.class,
+                                    InstrumentationScope.PROJECT,
+                                    (params) -> {
+    //                                    project.getExtensions().add("leafPluginSettings124", LeafPluginExtension.class);
+    //                                    LeafPluginExtension extension = (LeafPluginExtension) project.getExtensions().findByName("leafPluginSettings124");
+    //                                    params.setInvalidate(System.currentTimeMillis());
+    //                                    params.setTmpDir(new File(extension.tmpDir));
+                                        return null;
+                                    }
+                            );
+                            variant.getInstrumentation().setAsmFramesComputationMode(FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS);
+                        }
                 });
             }
         });

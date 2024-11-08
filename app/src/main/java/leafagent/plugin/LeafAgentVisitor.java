@@ -1,5 +1,6 @@
 package leafagent.plugin;
 
+import leafagent.annotations.Leaf;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -23,7 +24,7 @@ class LeafAgentVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-        methodVisitor = new LeafAgentMethodVisitor(Opcodes.ASM5, methodVisitor, access, name, name, desc);
+        methodVisitor = new LeafAgentMethodVisitor(Opcodes.ASM5, methodVisitor, access, mClassName, name, desc);
         return methodVisitor;
     }
 }
