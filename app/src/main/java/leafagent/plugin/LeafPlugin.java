@@ -21,7 +21,7 @@ public class LeafPlugin implements Plugin<Project> {
                         @Override
                         public void execute(Variant variant) {
                             variant.getInstrumentation().transformClassesWith(
-                                    LeafClassVisitorFactory.class,
+                                    AgentClassVisitorFactory.class,
                                     InstrumentationScope.PROJECT,
                                     (params) -> {
     //                                    project.getExtensions().add("leafPluginSettings124", LeafPluginExtension.class);

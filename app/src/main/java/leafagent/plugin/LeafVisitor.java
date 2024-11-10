@@ -1,13 +1,12 @@
 package leafagent.plugin;
 
-import leafagent.LeafLogger;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-class LeafAgentMethodVisitor extends MethodVisitor {
+class LeafVisitor extends MethodVisitor {
 
     @Internal
     private static final String COST_ANNOTATION_DESC = "Lleafagent/annotations/Leaf;";
@@ -27,7 +26,7 @@ class LeafAgentMethodVisitor extends MethodVisitor {
     @Internal
     private Type[] argumentArrays;
 
-    public LeafAgentMethodVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
+    public LeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
         super(api, mv);
         this.className = className;
         this.methodName = methodName;
@@ -38,8 +37,8 @@ class LeafAgentMethodVisitor extends MethodVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         if (COST_ANNOTATION_DESC.equals(desc)) {
+            System.out.println("MethodVisitor for " + methodName);
             isInjected = true;
-            LeafLogger.createNewLeaf(methodName);
         }
         return super.visitAnnotation(desc, visible);
     }

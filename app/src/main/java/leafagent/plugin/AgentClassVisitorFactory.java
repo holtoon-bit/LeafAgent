@@ -7,9 +7,9 @@ import com.android.build.api.instrumentation.ClassContext;
 import leafagent.annotations.Branch;
 import org.objectweb.asm.ClassVisitor;
 
-abstract public class LeafClassVisitorFactory implements AsmClassVisitorFactory<LeafClassVisitorFactory.LeafVisitorParameters> {
+abstract public class AgentClassVisitorFactory implements AsmClassVisitorFactory<AgentClassVisitorFactory.LeafAgentVisitorParameters> {
 
-    public abstract static class LeafVisitorParameters implements InstrumentationParameters {
+    public abstract static class LeafAgentVisitorParameters implements InstrumentationParameters {
 //        @OutputDirectory
 //        private Long invalidate = 0L;
 //        @OutputDirectory
@@ -48,7 +48,7 @@ abstract public class LeafClassVisitorFactory implements AsmClassVisitorFactory<
     @Override
     public ClassVisitor createClassVisitor(ClassContext classContext, ClassVisitor nextClassVisitor) {
         System.out.println("<Trace with LeafAgent> ~ " + classContext.getCurrentClassData().getClassName());
-        return new LeafAgentVisitor(nextClassVisitor);
+        return new BranchVisitor(nextClassVisitor);
     }
 
     public boolean isInstrumentable(ClassData classData) {
