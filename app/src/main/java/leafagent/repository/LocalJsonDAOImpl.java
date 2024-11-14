@@ -1,4 +1,6 @@
-package leafagent;
+package leafagent.repository;
+
+import leafagent.info.LeafInfo;
 
 public class LocalJsonDAOImpl implements LocalJsonDAO {
     @Override

@@ -9,45 +9,14 @@ import org.objectweb.asm.ClassVisitor;
 
 abstract public class AgentClassVisitorFactory implements AsmClassVisitorFactory<AgentClassVisitorFactory.LeafAgentVisitorParameters> {
 
-    public abstract static class LeafAgentVisitorParameters implements InstrumentationParameters {
-//        @OutputDirectory
-//        private Long invalidate = 0L;
-//        @OutputDirectory
-//        private Boolean debug = false;
-
-        public void LeafVisitorParameters() {
-//            this.invalidate = invalidate;
-//            this.debug = debug;
-        }
-
-//        public void setDebug(Boolean debug) {
-//            this.debug = debug;
-//        }
-//        @OutputDirectory
-//        public Boolean getDebug() {
-//            return debug;
-//        }
-//
-//        public void setInvalidate(Long invalidate) {
-//            this.invalidate = invalidate;
-//        }
-//        @OutputDirectory
-//        public Long getInvalidate() {
-//            return invalidate;
-//        }
-//
-//        public void setTmpDir(File tmpDir) {
-//            this.tmpDir = tmpDir;
-//        }
-//        @OutputDirectory
-//        public File getTmpDir() {
-//            return tmpDir;
-//        }
-    }
+    public abstract static class LeafAgentVisitorParameters implements InstrumentationParameters { }
 
     @Override
     public ClassVisitor createClassVisitor(ClassContext classContext, ClassVisitor nextClassVisitor) {
         System.out.println("<Trace with LeafAgent> ~ " + classContext.getCurrentClassData().getClassName());
+        if (classContext.getCurrentClassData().getSuperClasses().contains("androidx.appcompat.app.AppCompatActivity")) {
+            return new ActivityBranchVisitor(nextClassVisitor);
+        }
         return new BranchVisitor(nextClassVisitor);
     }
 

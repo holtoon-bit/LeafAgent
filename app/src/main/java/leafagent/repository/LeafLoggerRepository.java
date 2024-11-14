@@ -1,4 +1,6 @@
-package leafagent;
+package leafagent.repository;
+
+import leafagent.info.LeafInfo;
 
 import java.util.HashMap;
 

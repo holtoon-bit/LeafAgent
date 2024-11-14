@@ -1,4 +1,4 @@
-package leafagent;
+package leafagent.info;
 
 import java.util.LinkedList;
 
