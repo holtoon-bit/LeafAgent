@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.android.tools.build:gradle-api:8.8.0-alpha08'
+    implementation libs.gradle.api
 	implementation libs.javassist
 }
 
@@ -22,7 +22,7 @@ java {
 }
 
 application {
-    mainClass = "leafagent.OfficialTest"
+    mainClass = "leafagent.TestCode"
 }
 
 group = 'leafagent'

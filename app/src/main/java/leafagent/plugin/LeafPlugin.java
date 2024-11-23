@@ -23,13 +23,7 @@ public class LeafPlugin implements Plugin<Project> {
                             variant.getInstrumentation().transformClassesWith(
                                     AgentClassVisitorFactory.class,
                                     InstrumentationScope.PROJECT,
-                                    (params) -> {
-    //                                    project.getExtensions().add("leafPluginSettings124", LeafPluginExtension.class);
-    //                                    LeafPluginExtension extension = (LeafPluginExtension) project.getExtensions().findByName("leafPluginSettings124");
-    //                                    params.setInvalidate(System.currentTimeMillis());
-    //                                    params.setTmpDir(new File(extension.tmpDir));
-                                        return null;
-                                    }
+                                    (params) -> null
                             );
                             variant.getInstrumentation().setAsmFramesComputationMode(FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS);
                         }
