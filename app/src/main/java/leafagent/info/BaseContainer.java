@@ -9,29 +9,17 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 public class BaseContainer<T extends BaseContainer> {
-    protected LinkedList<T> childrenContainers = new LinkedList<>();
     protected BaseInfo info;
     protected LogWritable writer;
 
     public BaseContainer(String name) {
         info = new BaseInfo(name);
+        System.out.println(name);
         writer = new JsonWriter("logg.json");
     }
 
-    public BaseContainer(BaseContainer parent, String name) {
-        info = new BaseInfo(name);
-        parent.addChild(this);
-    }
-
-    public void addChild(T child) {
-        childrenContainers.add(child);
-    }
-
-    public LinkedList<T> getChildren() {
-        return childrenContainers;
-    }
-
     public void startTime() {
+        System.out.println(writer);
         try {
             System.out.println(new BufferedReader(new FileReader(writer.createFile("logg.json"))).readLine());
         } catch (IOException e) {

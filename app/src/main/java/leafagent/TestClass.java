@@ -11,13 +11,13 @@ public class TestClass extends TestClass1 {
     public void test() {
         super.test();
         branchContainer = ActivityRoot.createChild("com.market.leafandroid.activities.sellers.SellersActivity");
-        LeafContainer leafContainer = new LeafContainer(branchContainer, "addSellers");
+        LeafContainer leafContainer = new LeafContainer("addSellers");
         leafContainer.startTime(); //  <------
         leafContainer.endTime(); //  <------
     }
 }
 
-// // class version 65.0 (65)
+//// class version 65.0 (65)
 //// access flags 0x21
 //public class leafagent/TestClass extends leafagent/TestClass1 {
 //
@@ -54,10 +54,8 @@ public class TestClass extends TestClass1 {
 //    LINENUMBER 14 L2
 //    NEW leafagent/info/LeafContainer
 //    DUP
-//    ALOAD 0
-//    GETFIELD leafagent/TestClass.branchContainer : Lleafagent/info/TrunkContainer;
 //    LDC "addSellers"
-//    INVOKESPECIAL leafagent/info/LeafContainer.<init> (Lleafagent/info/BranchContainer;Ljava/lang/String;)V
+//    INVOKESPECIAL leafagent/info/LeafContainer.<init> (Ljava/lang/String;)V
 //    ASTORE 1
 //   L3
 //    LINENUMBER 15 L3
@@ -73,6 +71,6 @@ public class TestClass extends TestClass1 {
 //   L6
 //    LOCALVARIABLE this Lleafagent/TestClass; L0 L6 0
 //    LOCALVARIABLE leafContainer Lleafagent/info/LeafContainer; L3 L6 1
-//    MAXSTACK = 4
+//    MAXSTACK = 3
 //    MAXLOCALS = 2
 //}

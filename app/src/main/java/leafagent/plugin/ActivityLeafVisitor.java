@@ -20,9 +20,8 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitCode() {
-        super.visitCode();
-        System.out.println(isInjected);
-        if (COST_INIT_NAME.equals(methodName)) {
+        if (isInjected) {
+            afterStart();
         }
         else if (COST_START_NAME.equals(methodName)) {
             intoInitActivity();

@@ -17,9 +17,13 @@ public class JsonWriter implements LogWritable {
 //        }
     }
 
-    public static void setRootPath(String path) {
+    public static void setProjectPath(String path) {
         projectPath = path;
         System.out.println("==> " + path);
+    }
+
+    public static String getProjectPath() {
+        return projectPath;
     }
 
     @Override

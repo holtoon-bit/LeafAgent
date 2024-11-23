@@ -55,26 +55,19 @@ class LeafVisitor extends MethodVisitor {
         }
     }
 
-    private void afterStart() {
+    protected void afterStart() {
         String descTrunk = Type.getDescriptor(LeafContainer.class);
         mv.visitTypeInsn(
                 Opcodes.NEW,
                 descTrunk.substring(1, descTrunk.length()-1)
         );
         mv.visitInsn(Opcodes.DUP);
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(
-                Opcodes.GETFIELD,
-                className,
-                "branchContainer",
-                Type.getDescriptor(TrunkContainer.class)
-        );
         mv.visitLdcInsn(methodName);
         mv.visitMethodInsn(
                 Opcodes.INVOKESPECIAL,
                 Type.getInternalName(LeafContainer.class),
                 COST_INIT_NAME,
-                "("+Type.getDescriptor(BranchContainer.class)+Type.getDescriptor(String.class)+")V"
+                "("+Type.getDescriptor(String.class)+")V"
         );
         mv.visitVarInsn(Opcodes.ASTORE, 2);
         mv.visitVarInsn(Opcodes.ALOAD, 2);
@@ -86,7 +79,7 @@ class LeafVisitor extends MethodVisitor {
         );
     }
 
-    private void intoInit() {
+    protected void intoInit() {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitLdcInsn(className);
         mv.visitMethodInsn(

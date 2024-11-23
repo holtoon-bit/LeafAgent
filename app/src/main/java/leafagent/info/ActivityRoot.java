@@ -7,7 +7,7 @@ public class ActivityRoot {
 
     public static TrunkContainer createChild(String activityName) {
         TrunkContainer trunk = new TrunkContainer(activityName);
-        trunks.add(trunk);
+//        trunks.add(trunk);
         return trunk;
     }
 
