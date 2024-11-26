@@ -1,5 +1,6 @@
 package leafagent.plugin;
 
+import leafagent.info.BranchContainer;
 import leafagent.info.TrunkContainer;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.ClassVisitor;
@@ -23,7 +24,7 @@ class BranchVisitor extends ClassVisitor {
         cv.visitField(
                 Opcodes.ACC_PRIVATE,
                 "branchContainer",
-                Type.getDescriptor(TrunkContainer.class),
+                Type.getDescriptor(BranchContainer.class),
                 null,
                 null
         );

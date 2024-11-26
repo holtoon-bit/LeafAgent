@@ -2,6 +2,7 @@ package leafagent.plugin;
 
 import leafagent.info.ActivityRoot;
 import leafagent.info.TrunkContainer;
+import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -10,7 +11,7 @@ import org.objectweb.asm.Type;
 public class ActivityLeafVisitor extends LeafVisitor {
 
     @Internal
-    protected static final String COST_START_NAME = "onStart";
+    protected static final String COST_START_NAME = "onCreate";
     @Internal
     protected static final String COST_STOP_NAME = "onStop";
 
@@ -35,6 +36,33 @@ public class ActivityLeafVisitor extends LeafVisitor {
     // Write an action on starting the Activity
     // and create the BranchContainer
     private void intoInitActivity() {
+
+//    ALOAD 0
+//    INVOKEVIRTUAL leafagent/TestClass.getFilesDir ()Lleafagent/TestClass1;
+//    INVOKEVIRTUAL leafagent/TestClass1.getPath ()Ljava/lang/String;
+//    INVOKESTATIC leafagent/utils/JsonWriter.setProjectPath (Ljava/lang/String;)V
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                "android/content/ContextWrapper",
+                "getFilesDir",
+                "()Ljava/io/File;",
+                false
+        );
+        mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                "java/io/File",
+                "getPath",
+                "()"+Type.getDescriptor(String.class),
+                false
+        );
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(JsonWriter.class),
+                "setProjectPath",
+                "("+Type.getDescriptor(String.class)+")V",
+                false
+        );
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitLdcInsn(className);
         mv.visitMethodInsn(

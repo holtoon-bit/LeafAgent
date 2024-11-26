@@ -1,9 +1,6 @@
 package leafagent.plugin;
 
-import leafagent.info.ActivityRoot;
-import leafagent.info.BranchContainer;
-import leafagent.info.LeafContainer;
-import leafagent.info.TrunkContainer;
+import leafagent.info.*;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -62,12 +59,19 @@ class LeafVisitor extends MethodVisitor {
                 descTrunk.substring(1, descTrunk.length()-1)
         );
         mv.visitInsn(Opcodes.DUP);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitFieldInsn(
+                Opcodes.GETFIELD,
+                className,
+                "branchContainer",
+                Type.getDescriptor(TrunkContainer.class)
+        );
         mv.visitLdcInsn(methodName);
         mv.visitMethodInsn(
                 Opcodes.INVOKESPECIAL,
                 Type.getInternalName(LeafContainer.class),
                 COST_INIT_NAME,
-                "("+Type.getDescriptor(String.class)+")V"
+                "("+Type.getDescriptor(BranchContainer.class)+Type.getDescriptor(String.class)+")V"
         );
         mv.visitVarInsn(Opcodes.ASTORE, 2);
         mv.visitVarInsn(Opcodes.ALOAD, 2);
@@ -86,14 +90,14 @@ class LeafVisitor extends MethodVisitor {
                 Opcodes.INVOKESTATIC,
                 Type.getInternalName(ActivityRoot.class),
                 "createChild",
-                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(TrunkContainer.class),
+                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BranchContainer.class),
                 false
         );
         mv.visitFieldInsn(
                 Opcodes.PUTFIELD,
                 className,
                 "branchContainer",
-                Type.getDescriptor(TrunkContainer.class)
+                Type.getDescriptor(BranchContainer.class)
         );
     }
 

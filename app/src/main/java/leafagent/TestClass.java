@@ -3,6 +3,7 @@ package leafagent;
 import leafagent.info.ActivityRoot;
 import leafagent.info.LeafContainer;
 import leafagent.info.TrunkContainer;
+import leafagent.utils.JsonWriter;
 
 public class TestClass extends TestClass1 {
     private TrunkContainer branchContainer;
@@ -10,8 +11,9 @@ public class TestClass extends TestClass1 {
     @Override
     public void test() {
         super.test();
+        JsonWriter.setProjectPath(getFilesDir().getPath());
         branchContainer = ActivityRoot.createChild("com.market.leafandroid.activities.sellers.SellersActivity");
-        LeafContainer leafContainer = new LeafContainer("addSellers");
+        LeafContainer leafContainer = new LeafContainer(branchContainer, "addSellers");
         leafContainer.startTime(); //  <------
         leafContainer.endTime(); //  <------
     }
@@ -29,7 +31,7 @@ public class TestClass extends TestClass1 {
 //  // access flags 0x1
 //  public <init>()V
 //   L0
-//    LINENUMBER 7 L0
+//    LINENUMBER 8 L0
 //    ALOAD 0
 //    INVOKESPECIAL leafagent/TestClass1.<init> ()V
 //    RETURN
@@ -41,36 +43,44 @@ public class TestClass extends TestClass1 {
 //  // access flags 0x1
 //  public test()V
 //   L0
-//    LINENUMBER 12 L0
+//    LINENUMBER 13 L0
 //    ALOAD 0
 //    INVOKESPECIAL leafagent/TestClass1.test ()V
 //   L1
-//    LINENUMBER 13 L1
+//    LINENUMBER 14 L1
+//    ALOAD 0
+//    INVOKEVIRTUAL leafagent/TestClass.getFilesDir ()Lleafagent/TestClass1;
+//    INVOKEVIRTUAL leafagent/TestClass1.getPath ()Ljava/lang/String;
+//    INVOKESTATIC leafagent/utils/JsonWriter.setProjectPath (Ljava/lang/String;)V
+//   L2
+//    LINENUMBER 15 L2
 //    ALOAD 0
 //    LDC "com.market.leafandroid.activities.sellers.SellersActivity"
 //    INVOKESTATIC leafagent/info/ActivityRoot.createChild (Ljava/lang/String;)Lleafagent/info/TrunkContainer;
 //    PUTFIELD leafagent/TestClass.branchContainer : Lleafagent/info/TrunkContainer;
-//   L2
-//    LINENUMBER 14 L2
+//   L3
+//    LINENUMBER 16 L3
 //    NEW leafagent/info/LeafContainer
 //    DUP
+//    ALOAD 0
+//    GETFIELD leafagent/TestClass.branchContainer : Lleafagent/info/TrunkContainer;
 //    LDC "addSellers"
-//    INVOKESPECIAL leafagent/info/LeafContainer.<init> (Ljava/lang/String;)V
+//    INVOKESPECIAL leafagent/info/LeafContainer.<init> (Lleafagent/info/BranchContainer;Ljava/lang/String;)V
 //    ASTORE 1
-//   L3
-//    LINENUMBER 15 L3
+//   L4
+//    LINENUMBER 17 L4
 //    ALOAD 1
 //    INVOKEVIRTUAL leafagent/info/LeafContainer.startTime ()V
-//   L4
-//    LINENUMBER 16 L4
+//   L5
+//    LINENUMBER 18 L5
 //    ALOAD 1
 //    INVOKEVIRTUAL leafagent/info/LeafContainer.endTime ()V
-//   L5
-//    LINENUMBER 17 L5
-//    RETURN
 //   L6
-//    LOCALVARIABLE this Lleafagent/TestClass; L0 L6 0
-//    LOCALVARIABLE leafContainer Lleafagent/info/LeafContainer; L3 L6 1
-//    MAXSTACK = 3
+//    LINENUMBER 19 L6
+//    RETURN
+//   L7
+//    LOCALVARIABLE this Lleafagent/TestClass; L0 L7 0
+//    LOCALVARIABLE leafContainer Lleafagent/info/LeafContainer; L4 L7 1
+//    MAXSTACK = 4
 //    MAXLOCALS = 2
 //}

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class BaseInfo {
     private final String name;
-
+    private String desc = "";
     private long startMillis;
     private long endMillis;
 
@@ -16,6 +16,14 @@ public class BaseInfo {
 
     public String getName() {
         return name;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public long getStartMillis() {
@@ -32,6 +40,14 @@ public class BaseInfo {
 
     protected void setEndMillis(long endMillis) {
         this.endMillis = endMillis;
+    }
+
+    public void addChild(BaseInfo info) {
+        children.add(info);
+    }
+
+    public LinkedList<BaseInfo> getChildren() {
+        return children;
     }
 
     @Override

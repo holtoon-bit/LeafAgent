@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation libs.gradle.api
 	implementation libs.javassist
+	implementation libs.gson
 }
 
 java {

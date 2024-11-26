@@ -4,4 +4,12 @@ public class TestClass1 {
     public void test() {
         System.out.println("DDDD");
     }
+
+    public String getPath() {
+        return "path";
+    }
+
+    public TestClass1 getFilesDir() {
+        return new TestClass1();
+    }
 }
