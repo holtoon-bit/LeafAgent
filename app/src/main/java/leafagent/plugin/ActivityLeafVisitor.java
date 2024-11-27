@@ -1,7 +1,6 @@
 package leafagent.plugin;
 
-import leafagent.info.ActivityRoot;
-import leafagent.info.TrunkContainer;
+import leafagent.info.BranchContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.MethodVisitor;
@@ -11,7 +10,9 @@ import org.objectweb.asm.Type;
 public class ActivityLeafVisitor extends LeafVisitor {
 
     @Internal
-    protected static final String COST_START_NAME = "onCreate";
+    protected static final String COST_CREATE_NAME = "onCreate";
+    @Internal
+    protected static final String COST_START_NAME = "onStart";
     @Internal
     protected static final String COST_STOP_NAME = "onStop";
 
@@ -24,8 +25,10 @@ public class ActivityLeafVisitor extends LeafVisitor {
         if (isInjected) {
             afterStart();
         }
-        else if (COST_START_NAME.equals(methodName)) {
+        else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
+        }
+        else if (COST_START_NAME.equals(methodName)) {
             intoOnStart();
         }
         else if (COST_STOP_NAME.equals(methodName)) {
@@ -36,11 +39,6 @@ public class ActivityLeafVisitor extends LeafVisitor {
     // Write an action on starting the Activity
     // and create the BranchContainer
     private void intoInitActivity() {
-
-//    ALOAD 0
-//    INVOKEVIRTUAL leafagent/TestClass.getFilesDir ()Lleafagent/TestClass1;
-//    INVOKEVIRTUAL leafagent/TestClass1.getPath ()Ljava/lang/String;
-//    INVOKESTATIC leafagent/utils/JsonWriter.setProjectPath (Ljava/lang/String;)V
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
@@ -63,21 +61,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "("+Type.getDescriptor(String.class)+")V",
                 false
         );
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitLdcInsn(className);
-        mv.visitMethodInsn(
-                Opcodes.INVOKESTATIC,
-                Type.getInternalName(ActivityRoot.class),
-                "createChild",
-                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(TrunkContainer.class),
-                false
-        );
-        mv.visitFieldInsn(
-                Opcodes.PUTFIELD,
-                className,
-                "branchContainer",
-                Type.getDescriptor(TrunkContainer.class)
-        );
+        super.intoInit();
     }
 
     // set the Start Time for the Branch
@@ -87,11 +71,11 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 Opcodes.GETFIELD,
                 className,
                 "branchContainer",
-                Type.getDescriptor(TrunkContainer.class)
+                Type.getDescriptor(BranchContainer.class)
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(TrunkContainer.class),
+                Type.getInternalName(BranchContainer.class),
                 "startTime",
                 "()V"
         );
@@ -103,11 +87,11 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 Opcodes.GETFIELD,
                 className,
                 "branchContainer",
-                Type.getDescriptor(TrunkContainer.class)
+                Type.getDescriptor(BranchContainer.class)
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(TrunkContainer.class),
+                Type.getInternalName(BranchContainer.class),
                 "endTime",
                 "()V"
         );

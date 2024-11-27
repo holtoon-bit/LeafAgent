@@ -1,7 +1,6 @@
 package leafagent.plugin;
 
 import leafagent.info.BranchContainer;
-import leafagent.info.TrunkContainer;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;

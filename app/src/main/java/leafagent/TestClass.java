@@ -1,12 +1,13 @@
 package leafagent;
 
 import leafagent.info.ActivityRoot;
+import leafagent.info.BranchContainer;
 import leafagent.info.LeafContainer;
 import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 
 public class TestClass extends TestClass1 {
-    private TrunkContainer branchContainer;
+    private BranchContainer branchContainer;
 
     @Override
     public void test() {

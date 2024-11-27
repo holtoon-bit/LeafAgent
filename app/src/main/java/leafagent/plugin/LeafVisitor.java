@@ -64,7 +64,7 @@ class LeafVisitor extends MethodVisitor {
                 Opcodes.GETFIELD,
                 className,
                 "branchContainer",
-                Type.getDescriptor(TrunkContainer.class)
+                Type.getDescriptor(BranchContainer.class)
         );
         mv.visitLdcInsn(methodName);
         mv.visitMethodInsn(
@@ -104,7 +104,6 @@ class LeafVisitor extends MethodVisitor {
     @Override
     public void visitInsn(int opcode) {
         if (isInjected && opcode == Opcodes.RETURN) {
-            System.out.println(methodName);
             beforeReturn();
         }
         super.visitInsn(opcode);

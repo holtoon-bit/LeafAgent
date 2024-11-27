@@ -1,11 +1,8 @@
 package leafagent.plugin;
 
-import leafagent.info.BranchContainer;
-import leafagent.info.TrunkContainer;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 public class ActivityBranchVisitor extends BranchVisitor {
 
@@ -16,14 +13,6 @@ public class ActivityBranchVisitor extends BranchVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         super.visit(version, access, name, signature, superName, interfaces);
-        this.className = name;
-        cv.visitField(
-                Opcodes.ACC_PRIVATE,
-                "branchContainer",
-                Type.getDescriptor(TrunkContainer.class),
-                null,
-                null
-        );
     }
 
     @Override

@@ -5,9 +5,8 @@ import java.util.LinkedList;
 public class ActivityRoot {
     private static final LinkedList<TrunkContainer> trunks = new LinkedList<>();
 
-    public static TrunkContainer createChild(String activityName) {
-        TrunkContainer trunk = new TrunkContainer(activityName);
-//        trunks.add(trunk);
+    public static BranchContainer createChild(String activityName) {
+        BranchContainer trunk = new BranchContainer(activityName);
         System.out.println("p=> " + trunk);
         return trunk;
     }
