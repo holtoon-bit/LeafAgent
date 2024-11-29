@@ -6,6 +6,6 @@ public class BranchContainer extends BaseContainer<LeafContainer> {
     @Override
     public void startTime() {
         super.startTime();
-        getWriter().startLeaf(info);
+        getWriter().writeLeaf(info);
     }
 }
