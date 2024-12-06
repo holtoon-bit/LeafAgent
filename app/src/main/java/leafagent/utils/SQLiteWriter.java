@@ -2,20 +2,21 @@ package leafagent.utils;
 
 import leafagent.info.BaseInfo;
 
-public class SQLiteWriter implements LogWritable {
-    static private String projectPath;
+public class SQLiteWriter extends LogWriter {
+    private LogWritableRepository repository;
 
-    public static void setProjectPath(String path) {
-        projectPath = path;
+    public SQLiteWriter() {}
+    public SQLiteWriter(String name) {
+        repository = createRepository(name);
     }
 
     @Override
     public LogWritableRepository createRepository(String name) {
-        return null;
+        return new SQLiteWritableRepositoryImpl(getProjectPath() + "/" + name);
     }
 
     @Override
     public void writeLeaf(BaseInfo info) {
-
+        repository.insert(info);
     }
 }
