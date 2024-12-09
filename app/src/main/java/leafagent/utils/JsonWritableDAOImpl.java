@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import leafagent.info.BaseInfo;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class JsonWritableDAOImpl implements LogWritableDAO {
     private File file;
@@ -11,7 +12,7 @@ public class JsonWritableDAOImpl implements LogWritableDAO {
     public JsonWritableDAOImpl(String path) {
         file = new File(path);
         Gson gson = new Gson();
-        BaseInfo root = new BaseInfo("Root");
+        BaseInfo root = new BaseInfo.Build().setName("Root").build();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(gson.toJson(root));
@@ -23,7 +24,7 @@ public class JsonWritableDAOImpl implements LogWritableDAO {
     }
 
     @Override
-    public void create(BaseInfo info) {
+    public BaseInfo create(BaseInfo info) {
         try {
             // EDIT: Нужно избавиться от постоянной записи и сделать Buffer с сохранением в памяти нескольких значений,
             // мб сам BufferReader подойдет.
@@ -45,6 +46,7 @@ public class JsonWritableDAOImpl implements LogWritableDAO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return info;
     }
 
     private BaseInfo getLastInfo(BaseInfo info) {
@@ -62,12 +64,22 @@ public class JsonWritableDAOImpl implements LogWritableDAO {
     }
 
     @Override
+    public ArrayList<BaseInfo> getAll() {
+        return null;
+    }
+
+    @Override
     public void update(BaseInfo info) {
 
     }
 
     @Override
     public void remove(BaseInfo info) {
+
+    }
+
+    @Override
+    public void removeAll() {
 
     }
 }

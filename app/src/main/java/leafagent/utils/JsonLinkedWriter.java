@@ -1,19 +1,19 @@
 package leafagent.utils;
 
-import leafagent.info.*;
+import leafagent.info.BaseInfo;
 
 import java.util.ArrayList;
 
-public class JsonWriter extends LogWriter {
+public class JsonLinkedWriter extends LogWriter {
     private LogWritableRepository jsonRepository;
 
-    public JsonWriter(String name) {
+    public JsonLinkedWriter(String name) {
         jsonRepository = createRepository(name);
     }
 
     @Override
     public LogWritableRepository createRepository(String name) {
-        return new JsonWritableRepositoryImpl(getProjectPath() + "/" + name);
+        return new JsonLinkedWritableRepositoryImpl(getProjectPath() + "/" + name + ".json");
     }
 
     @Override
@@ -23,7 +23,7 @@ public class JsonWriter extends LogWriter {
 
     @Override
     public ArrayList<BaseInfo> getStruct() {
-        return new ArrayList<>();
+        return jsonRepository.getAll();
     }
 
     @Override

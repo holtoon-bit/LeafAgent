@@ -7,7 +7,6 @@ public class ActivityRoot {
 
     public static BranchContainer createChild(String activityName) {
         BranchContainer trunk = new BranchContainer(activityName);
-        System.out.println("p=> " + trunk);
         return trunk;
     }
 

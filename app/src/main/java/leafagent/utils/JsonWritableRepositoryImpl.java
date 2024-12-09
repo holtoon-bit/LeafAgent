@@ -2,6 +2,8 @@ package leafagent.utils;
 
 import leafagent.info.BaseInfo;
 
+import java.util.ArrayList;
+
 public class JsonWritableRepositoryImpl implements LogWritableRepository {
     private LogWritableDAO dao;
 
@@ -20,6 +22,11 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     }
 
     @Override
+    public ArrayList<BaseInfo> getAll() {
+        return null;
+    }
+
+    @Override
     public void update(BaseInfo info) {
         dao.update(info);
     }
@@ -27,5 +34,10 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     @Override
     public void remove(BaseInfo info) {
         dao.remove(info);
+    }
+
+    @Override
+    public void removeAll() {
+
     }
 }

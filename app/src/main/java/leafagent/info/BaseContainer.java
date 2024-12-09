@@ -1,22 +1,22 @@
 package leafagent.info;
 
-import leafagent.utils.JsonWriter;
-import leafagent.utils.LogWritable;
+import leafagent.utils.JsonLinkedWriter;
+import leafagent.utils.LogWriter;
 
 public class BaseContainer<T extends BaseContainer> {
     protected BaseInfo info;
-    private LogWritable writer;
+    private LogWriter writer;
 
     public BaseContainer() {
     }
 
     public BaseContainer(String name) {
         super();
-        info = new BaseInfo(name);
-        writer = new JsonWriter("logg.json");
+        info = new BaseInfo.Build().setName(name).build();
+        writer = new JsonLinkedWriter("logg");
     }
 
-    public LogWritable getWriter() {
+    public LogWriter getWriter() {
         return writer;
     }
 
@@ -30,9 +30,11 @@ public class BaseContainer<T extends BaseContainer> {
 
     public void startTime() {
         info.setStartMillis(System.currentTimeMillis());
+        getWriter().writeLeaf(info);
     }
 
     public void endTime() {
         info.setEndMillis(System.currentTimeMillis());
+        System.out.println("Structure " + getWriter().getStruct());
     }
 }

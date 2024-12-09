@@ -3,7 +3,6 @@ package leafagent;
 import leafagent.info.ActivityRoot;
 import leafagent.info.BranchContainer;
 import leafagent.info.LeafContainer;
-import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 
 public class TestClass extends TestClass1 {
@@ -15,6 +14,7 @@ public class TestClass extends TestClass1 {
         JsonWriter.setProjectPath(getFilesDir().getPath());
         branchContainer = ActivityRoot.createChild("com.market.leafandroid.activities.sellers.SellersActivity");
         LeafContainer leafContainer = new LeafContainer(branchContainer, "addSellers");
+        branchContainer.startTime();
         leafContainer.startTime(); //  <------
         leafContainer.endTime(); //  <------
     }

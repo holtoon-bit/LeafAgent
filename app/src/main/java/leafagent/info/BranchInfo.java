@@ -1,7 +1,7 @@
 package leafagent.info;
 
 public class BranchInfo extends BaseInfo {
-    public BranchInfo(String className) {
-        super(className);
+    public BranchInfo(Build builder) {
+        super(builder);
     }
 }

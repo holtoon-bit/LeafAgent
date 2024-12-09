@@ -4,11 +4,11 @@ import leafagent.info.BaseInfo;
 
 import java.util.ArrayList;
 
-public class SQLiteWritableRepositoryImpl implements LogWritableRepository {
+public class JsonLinkedWritableRepositoryImpl implements LogWritableRepository {
     private LogWritableDAO dao;
 
-    public SQLiteWritableRepositoryImpl(String path) {
-        dao = new SQLiteWritableDAOImpl(path);
+    public JsonLinkedWritableRepositoryImpl(String path) {
+        dao = new JsonLinkedWritableDAOImpl(path);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class SQLiteWritableRepositoryImpl implements LogWritableRepository {
 
     @Override
     public ArrayList<BaseInfo> getAll() {
-        return null;
+        return dao.getAll();
     }
 
     @Override
@@ -38,6 +38,6 @@ public class SQLiteWritableRepositoryImpl implements LogWritableRepository {
 
     @Override
     public void removeAll() {
-
+        dao.removeAll();
     }
 }

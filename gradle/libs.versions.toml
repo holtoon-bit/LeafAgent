@@ -2,8 +2,14 @@
 javassist = "3.29.2-GA"
 gradle-api = "8.8.0-alpha08"
 gson = "2.11.0"
+sqlite-jdbc = "3.47.1.0"
+junit = "5.11.3"
+junit-engine = "5.11.3"
 
 [libraries]
 javassist = { module = "org.javassist:javassist", version.ref = "javassist" }
 gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "gradle-api" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
+junit = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-engine" }
