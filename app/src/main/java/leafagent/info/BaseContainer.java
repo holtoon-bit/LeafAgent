@@ -35,6 +35,6 @@ public class BaseContainer<T extends BaseContainer> {
 
     public void endTime() {
         info.setEndMillis(System.currentTimeMillis());
-        System.out.println("Structure " + getWriter().getStruct());
+        getWriter().updateLeaf(info);
     }
 }

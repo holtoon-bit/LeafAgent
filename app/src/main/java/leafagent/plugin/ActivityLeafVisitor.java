@@ -28,9 +28,9 @@ public class ActivityLeafVisitor extends LeafVisitor {
         else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
         }
-        else if (COST_START_NAME.equals(methodName)) {
-            intoOnStart();
-        }
+//        else if (COST_START_NAME.equals(methodName)) {
+//            intoOnStart();
+//        }
         else if (COST_STOP_NAME.equals(methodName)) {
             intoOnStop();
         }
@@ -62,6 +62,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 false
         );
         super.intoInit();
+        intoOnStart();
     }
 
     // set the Start Time for the Branch

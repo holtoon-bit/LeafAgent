@@ -2,7 +2,7 @@ package leafagent.utils;
 
 import leafagent.info.BaseInfo;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class JsonLinkedWriter extends LogWriter {
     private LogWritableRepository jsonRepository;
@@ -22,7 +22,12 @@ public class JsonLinkedWriter extends LogWriter {
     }
 
     @Override
-    public ArrayList<BaseInfo> getStruct() {
+    public void updateLeaf(BaseInfo info) {
+        jsonRepository.update(info);
+    }
+
+    @Override
+    public LinkedList<BaseInfo> getStruct() {
         return jsonRepository.getAll();
     }
 

@@ -3,7 +3,7 @@ package leafagent.utils;
 import leafagent.info.BaseInfo;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class SQLiteWritableDAOImpl implements LogWritableDAO {
     private String MAIN_TABLE_NAME = "Calls";
@@ -42,7 +42,7 @@ public class SQLiteWritableDAOImpl implements LogWritableDAO {
     }
 
     @Override
-    public BaseInfo create(BaseInfo info) {
+    public void create(BaseInfo info) {
         try {
             PreparedStatement pstmt = conn.prepareStatement(
                     "INSERT INTO " + MAIN_TABLE_NAME +
@@ -58,7 +58,6 @@ public class SQLiteWritableDAOImpl implements LogWritableDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return info;
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SQLiteWritableDAOImpl implements LogWritableDAO {
     }
 
     @Override
-    public ArrayList<BaseInfo> getAll() {
+    public LinkedList<BaseInfo> getAll() {
         return null;
     }
 

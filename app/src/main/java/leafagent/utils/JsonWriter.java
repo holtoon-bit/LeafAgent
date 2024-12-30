@@ -22,6 +22,11 @@ public class JsonWriter extends LogWriter {
     }
 
     @Override
+    public void updateLeaf(BaseInfo info) {
+
+    }
+
+    @Override
     public ArrayList<BaseInfo> getStruct() {
         return new ArrayList<>();
     }

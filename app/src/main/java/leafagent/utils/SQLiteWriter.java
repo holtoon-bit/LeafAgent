@@ -23,6 +23,11 @@ public class SQLiteWriter extends LogWriter {
     }
 
     @Override
+    public void updateLeaf(BaseInfo info) {
+
+    }
+
+    @Override
     public ArrayList<BaseInfo> getStruct() {
         return new ArrayList<>();
     }

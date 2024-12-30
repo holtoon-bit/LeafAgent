@@ -79,6 +79,12 @@ public class BaseInfo {
         return name;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        BaseInfo info2 = (BaseInfo) obj;
+        return name.equals(info2.getName());
+    }
+
     public static class Build {
         protected int id;
         protected int parentId;

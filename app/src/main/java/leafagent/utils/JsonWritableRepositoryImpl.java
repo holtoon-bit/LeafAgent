@@ -2,7 +2,7 @@ package leafagent.utils;
 
 import leafagent.info.BaseInfo;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class JsonWritableRepositoryImpl implements LogWritableRepository {
     private LogWritableDAO dao;
@@ -22,7 +22,7 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     }
 
     @Override
-    public ArrayList<BaseInfo> getAll() {
+    public LinkedList<BaseInfo> getAll() {
         return null;
     }
 

@@ -1,13 +1,34 @@
 [
    {
       "package": "com/market/leafandroid/activities/sellers",
-      "name": "SellerActivity",
+      "name": "SellersActivity",
       "desc": "",
       "startTime": 1732362624562,
       "endTime": 1732362784243,
       "leafs": [
          {
             "name": "addSellers",
+            "desc": "",
+            "startTime": 1732362877432,
+            "branches": []
+         }
+      ]
+   },
+   {
+      "package": "com/market/leafandroid/activities/seller",
+      "name": "SellerProfileActivity",
+      "desc": "",
+      "startTime": 1732362624562,
+      "endTime": 1732362784243,
+      "leafs": [
+         {
+            "name": "getInfo",
+            "desc": "",
+            "startTime": 1732362877432,
+            "branches": []
+         },
+         {
+            "name": "addInfo",
             "desc": "",
             "startTime": 1732362877432,
             "branches": []

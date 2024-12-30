@@ -4,36 +4,21 @@ import com.google.gson.Gson;
 import leafagent.info.BaseInfo;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.LinkedList;
 
 public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     private File file;
     private Gson gson;
 
-    private static BlockingQueue<BaseInfo> queue = new LinkedBlockingQueue<>();
-    private static ArrayList<BaseInfo> arrayChildren = new ArrayList<>();
+    private static LinkedList<BaseInfo> arrayChildren = new LinkedList<>();
 
     public JsonLinkedWritableDAOImpl(String path) {
         gson = new Gson();
         file = new File(path);
-//        try {
-//            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-//            writer.write("[]");
-//            writer.flush();
-//            writer.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     @Override
-    public BaseInfo create(BaseInfo info) {
-//            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-//            TypeToken<ArrayList<BaseInfo>> collectionType = new TypeToken<>(){};
-//            ArrayList<BaseInfo> arrayChildren = gson.fromJson(bufferedReader.readLine(), collectionType);
-
+    public void create(BaseInfo info) {
         for (int i = arrayChildren.size() - 1; i >= 0; i--) {
             if ((arrayChildren.get(i).getEndMillis() == 0)) {
                 info.setParentId(arrayChildren.get(i).getId());
@@ -42,9 +27,9 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
         }
         info.setId(arrayChildren.size());
         arrayChildren.add(info);
-//            arrayChildren.add(info);
 
         try {
+            System.out.println(gson.toJson(arrayChildren));
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
             bufferedWriter.write(gson.toJson(arrayChildren));
             bufferedWriter.flush();
@@ -52,42 +37,22 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//            bufferedReader.close();
-        return info;
     }
 
     @Override
     public BaseInfo get(int id) {
-//        try {
-//            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-//            TypeToken<ArrayList<BaseInfo>> collectionType = new TypeToken<>(){};
-//            ArrayList<BaseInfo> arrayChildren = gson.fromJson(bufferedReader.readLine(), collectionType);
-//            bufferedReader.close();
-            return arrayChildren.get(id);
-//        } catch (IOException e) {
-//            System.out.println(e);
-//            return null;
-//        }
+        return arrayChildren.get(id);
     }
 
     @Override
-    public ArrayList<BaseInfo> getAll() {
-//        try {
-//            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-//            TypeToken<ArrayList<BaseInfo>> collectionType = new TypeToken<>(){};
-//            String line = bufferedReader.readLine();
-//            bufferedReader.close();
-//            return gson.fromJson(line, collectionType);
-//        } catch (IOException e) {
-//            System.out.println(e);
-//            return new ArrayList<>();
-//        }
+    public LinkedList<BaseInfo> getAll() {
         return arrayChildren;
     }
 
     @Override
-    public void update(BaseInfo info) {
-
+    public void update(BaseInfo newInfo) {
+        arrayChildren.set(arrayChildren.indexOf(newInfo), newInfo);
+        System.out.println(gson.toJson(arrayChildren));
     }
 
     @Override
