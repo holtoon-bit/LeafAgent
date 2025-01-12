@@ -5,6 +5,7 @@ public class BranchContainer extends BaseContainer<LeafContainer> {
 
     @Override
     public void startTime() {
+        getInfo().setParentId(-1);
         super.startTime();
     }
 }

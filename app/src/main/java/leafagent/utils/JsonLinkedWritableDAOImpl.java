@@ -19,10 +19,12 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
 
     @Override
     public void create(BaseInfo info) {
-        for (int i = arrayChildren.size() - 1; i >= 0; i--) {
-            if ((arrayChildren.get(i).getEndMillis() == 0)) {
-                info.setParentId(arrayChildren.get(i).getId());
-                break;
+        if (info.getParentId() != -1) {
+            for (int i = arrayChildren.size() - 1; i >= 0; i--) {
+                if ((arrayChildren.get(i).getEndMillis() == 0)) {
+                    info.setParentId(arrayChildren.get(i).getId());
+                    break;
+                }
             }
         }
         info.setId(arrayChildren.size());
