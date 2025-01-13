@@ -13,7 +13,7 @@ abstract public class AgentClassVisitorFactory implements AsmClassVisitorFactory
 
     @Override
     public ClassVisitor createClassVisitor(ClassContext classContext, ClassVisitor nextClassVisitor) {
-        System.out.println("<Trace with LeafAgent> ~ " + classContext.getCurrentClassData().getClassName());
+        new AdbLeafSetting();
         if (classContext.getCurrentClassData().getSuperClasses().contains("androidx.appcompat.app.AppCompatActivity")) {
             return new ActivityBranchVisitor(nextClassVisitor);
         }
