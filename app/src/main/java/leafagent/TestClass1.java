@@ -12,4 +12,6 @@ public class TestClass1 {
     public TestClass1 getFilesDir() {
         return new TestClass1();
     }
+
+    protected void onStart() {}
 }

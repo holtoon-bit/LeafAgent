@@ -3,6 +3,7 @@ package leafagent.plugin;
 import leafagent.info.BranchContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -10,11 +11,11 @@ import org.objectweb.asm.Type;
 public class ActivityLeafVisitor extends LeafVisitor {
 
     @Internal
-    protected static final String COST_CREATE_NAME = "onCreate";
+    public static final String COST_CREATE_NAME = "onCreate";
     @Internal
-    protected static final String COST_START_NAME = "onStart";
+    public static final String COST_START_NAME = "onStart";
     @Internal
-    protected static final String COST_STOP_NAME = "onStop";
+    public static final String COST_STOP_NAME = "onStop";
 
     public ActivityLeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
         super(api, mv, access, className, methodName, desc);
@@ -22,17 +23,17 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitCode() {
+        if (COST_START_NAME.equals(methodName)) {
+            intoOnStart();
+        }
+        else if (COST_STOP_NAME.equals(methodName)) {
+            intoOnStop();
+        }
         if (isInjected) {
             afterStart();
         }
         else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
-        }
-//        else if (COST_START_NAME.equals(methodName)) {
-//            intoOnStart();
-//        }
-        else if (COST_STOP_NAME.equals(methodName)) {
-            intoOnStop();
         }
     }
 
@@ -62,7 +63,6 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 false
         );
         super.intoInit();
-        intoOnStart();
     }
 
     // set the Start Time for the Branch

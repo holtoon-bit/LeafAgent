@@ -10,7 +10,7 @@ import org.objectweb.asm.Type;
 class LeafVisitor extends MethodVisitor {
 
     @Internal
-    public static final String COST_ANNOTATION_DESC = "Lleafagent/annotations/Leaf;";
+    public static final String COST_ANNOTATION_LEAF = "Lleafagent/annotations/Leaf;";
     @Internal
     protected static final String COST_INIT_NAME = "<init>";
 
@@ -36,7 +36,7 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        if (COST_ANNOTATION_DESC.equals(desc)) {
+        if (COST_ANNOTATION_LEAF.equals(desc)) {
             isInjected = true;
         }
         return super.visitAnnotation(desc, visible);

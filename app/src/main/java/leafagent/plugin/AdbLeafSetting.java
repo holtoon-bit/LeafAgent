@@ -5,10 +5,10 @@ import java.util.Scanner;
 
 public class AdbLeafSetting {
     public AdbLeafSetting() {
-        forward();
+        setting();
     }
 
-    public void forward() {
+    private static void forward() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("adb", "forward", "tcp:2112", "tcp:1221");
             Process process = processBuilder.start();
@@ -25,5 +25,9 @@ public class AdbLeafSetting {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void setting() {
+        forward();
     }
 }

@@ -1,23 +1,58 @@
 package leafagent.plugin;
 
+import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class ActivityBranchVisitor extends BranchVisitor {
+    @Internal
+    private boolean isOnStartCreated = false;
+    @Internal
+    private boolean isOnStopCreated = false;
 
     public ActivityBranchVisitor(ClassVisitor classVisitor) {
         super(classVisitor);
     }
 
     @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        super.visit(version, access, name, signature, superName, interfaces);
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        switch (name) {
+            case (ActivityLeafVisitor.COST_START_NAME):
+                isOnStartCreated = true;
+                break;
+            case (ActivityLeafVisitor.COST_STOP_NAME):
+                isOnStopCreated = true;
+                break;
+        }
+        MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
+        return new ActivityLeafVisitor(Opcodes.ASM5, methodVisitor, access, className, name, desc);
     }
 
     @Override
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
-        return new ActivityLeafVisitor(Opcodes.ASM5, methodVisitor, access, className, name, desc);
+    public void visitEnd() {
+        if (!isOnStartCreated) {
+            createActivitySuperFunction(Opcodes.ACC_PROTECTED, ActivityLeafVisitor.COST_START_NAME, "()V", null, null);
+        }
+        if (!isOnStopCreated) {
+            createActivitySuperFunction(Opcodes.ACC_PROTECTED, ActivityLeafVisitor.COST_STOP_NAME, "()V", null, null);
+        }
+        super.visitEnd();
+    }
+
+    private void createActivitySuperFunction(int access, String name, String desc, String signature, String[] exceptions) {
+        MethodVisitor smv = super.visitMethod(access, name, desc, signature, exceptions);
+        smv = new ActivityLeafVisitor(Opcodes.ASM5, smv, access, className, name, desc);
+        smv.visitCode();
+        smv.visitVarInsn(Opcodes.ALOAD, 0);
+        smv.visitMethodInsn(
+                Opcodes.INVOKESPECIAL,
+                "androidx/appcompat/app/AppCompatActivity",
+                name,
+                desc,
+                false
+        );
+        smv.visitInsn(Opcodes.RETURN);
+        smv.visitEnd();
     }
 }
