@@ -103,7 +103,11 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitInsn(int opcode) {
+        if (opcode == Opcodes.RETURN) {
+            System.out.println(methodName + " RETURN");
+        }
         if (isInjected && opcode == Opcodes.RETURN) {
+            System.out.println(methodName + " END with " + opcode);
             beforeReturn();
         }
         super.visitInsn(opcode);

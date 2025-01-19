@@ -3,7 +3,6 @@ package leafagent.plugin;
 import leafagent.info.BranchContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -23,17 +22,16 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitCode() {
-        if (COST_START_NAME.equals(methodName)) {
-            intoOnStart();
-        }
-        else if (COST_STOP_NAME.equals(methodName)) {
-            intoOnStop();
-        }
         if (isInjected) {
             afterStart();
         }
         else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
+        } else if (COST_START_NAME.equals(methodName)) {
+            intoOnStart();
+        }
+        else if (COST_STOP_NAME.equals(methodName)) {
+            intoOnStop();
         }
     }
 

@@ -25,7 +25,7 @@ public class ActivityBranchVisitor extends BranchVisitor {
                 isOnStopCreated = true;
                 break;
         }
-        MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
+        MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions);
         return new ActivityLeafVisitor(Opcodes.ASM5, methodVisitor, access, className, name, desc);
     }
 
