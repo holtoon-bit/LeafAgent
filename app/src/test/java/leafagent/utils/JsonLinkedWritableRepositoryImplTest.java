@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +33,7 @@ class JsonLinkedWritableRepositoryImplTest {
 
         // when
         repository.insert(info1);
-        ArrayList<BaseInfo> actualArray = repository.getAll();
+        LinkedList<BaseInfo> actualArray = repository.getAll();
 
         // then
         ArrayList<BaseInfo> expectedArray = new ArrayList<>(Arrays.asList(info1));
@@ -58,7 +59,7 @@ class JsonLinkedWritableRepositoryImplTest {
         repository.insert(info1);
         repository.insert(info2);
         repository.insert(info3);
-        ArrayList<BaseInfo> actualArray = repository.getAll();
+        LinkedList<BaseInfo> actualArray = repository.getAll();
 
         // then
         ArrayList<BaseInfo> expectedArray = new ArrayList<>(Arrays.asList(info1, info2, info3));

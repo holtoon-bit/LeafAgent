@@ -11,10 +11,16 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     private Gson gson;
 
     private static LinkedList<BaseInfo> arrayChildren = new LinkedList<>();
+    private BufferedWriter bufferedWriter;
 
     public JsonLinkedWritableDAOImpl(String path) {
         gson = new Gson();
         file = new File(path);
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(file));
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 
     @Override
@@ -31,13 +37,10 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
         arrayChildren.add(info);
 
         try {
-            System.out.println(gson.toJson(arrayChildren));
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
-            bufferedWriter.write(gson.toJson(arrayChildren));
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println(gson.toJson(arrayChildren.toArray()));
+            bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
@@ -54,7 +57,7 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     @Override
     public void update(BaseInfo newInfo) {
         arrayChildren.set(arrayChildren.indexOf(newInfo), newInfo);
-        System.out.println(gson.toJson(arrayChildren));
+        System.out.println(gson.toJson(arrayChildren.toArray()));
     }
 
     @Override

@@ -29,6 +29,7 @@ public class BaseContainer<T extends BaseContainer> {
     }
 
     public void startTime() {
+        System.out.println("startTime " + info.getName());
         info.setStartMillis(System.currentTimeMillis());
         getWriter().writeLeaf(info);
     }
