@@ -1,9 +1,11 @@
 package leafagent.plugin;
 
+import leafagent.info.TrunkContainer;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 public class ActivityBranchVisitor extends BranchVisitor {
     @Internal
@@ -13,6 +15,13 @@ public class ActivityBranchVisitor extends BranchVisitor {
 
     public ActivityBranchVisitor(ClassVisitor classVisitor) {
         super(classVisitor);
+        cv.visitField(
+                Opcodes.ACC_PRIVATE,
+                "trunkContainer",
+                Type.getDescriptor(TrunkContainer.class),
+                null,
+                null
+        );
     }
 
     @Override

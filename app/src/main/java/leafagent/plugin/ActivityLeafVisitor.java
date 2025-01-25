@@ -1,6 +1,8 @@
 package leafagent.plugin;
 
+import leafagent.info.ActivityRoot;
 import leafagent.info.BranchContainer;
+import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.MethodVisitor;
@@ -22,16 +24,11 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitCode() {
-        if (isInjected) {
+        if (isInjected || COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName)) {
             afterStart();
         }
         else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
-        } else if (COST_START_NAME.equals(methodName)) {
-            intoOnStart();
-        }
-        else if (COST_STOP_NAME.equals(methodName)) {
-            intoOnStop();
         }
     }
 
@@ -60,7 +57,35 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "("+Type.getDescriptor(String.class)+")V",
                 false
         );
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitLdcInsn(className);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(ActivityRoot.class),
+                "createChild",
+                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(TrunkContainer.class),
+                false
+        );
+        mv.visitFieldInsn(
+                Opcodes.PUTFIELD,
+                className,
+                "trunkContainer",
+                Type.getDescriptor(TrunkContainer.class)
+        );
         super.intoInit();
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitFieldInsn(
+                Opcodes.GETFIELD,
+                className,
+                "trunkContainer",
+                Type.getDescriptor(TrunkContainer.class)
+        );
+        mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                Type.getInternalName(TrunkContainer.class),
+                "startTime",
+                "()V"
+        );
     }
 
     // set the Start Time for the Branch
