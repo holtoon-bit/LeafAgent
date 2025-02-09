@@ -61,7 +61,7 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        if (isInterface && isNew && !isAddedThread && owner.equals(Type.getInternalName(Thread.class)) && name.equals(COST_INIT_NAME)) {
+        if (isInjected && isNew && !isAddedThread && owner.equals(Type.getInternalName(Thread.class)) && name.equals(COST_INIT_NAME)) {
             isAddedThread = true;
             addLeaf(owner + "." + name);
             addLeafStartTime(owner + "." + name);
@@ -76,7 +76,6 @@ class LeafVisitor extends MethodVisitor {
     }
 
     private void addLeaf(String leafName) {
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(LeafContainer.class));
         mv.visitInsn(Opcodes.DUP);
         mv.visitLdcInsn(leafName);
