@@ -1,13 +1,12 @@
 package leafagent;
 
-public class TestCode extends TestClass1 {
+import leafagent.info.LeafContainer;
+import leafagent.plugin.CreatedContainers;
 
+public class TestCode {
     public static void main(String[] args) {
-        System.out.println("SSS");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        CreatedContainers.addNew(new LeafContainer("nameS", "nameP"));
+        CreatedContainers.get("nameS").startTime();
+        CreatedContainers.get("nameS").endTime();
     }
 }

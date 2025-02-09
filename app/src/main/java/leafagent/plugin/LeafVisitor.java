@@ -1,5 +1,6 @@
 package leafagent.plugin;
 
+import leafagent.annotations.Leaf;
 import leafagent.info.*;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.AnnotationVisitor;
@@ -9,8 +10,6 @@ import org.objectweb.asm.Type;
 
 class LeafVisitor extends MethodVisitor {
 
-    @Internal
-    public static final String COST_ANNOTATION_LEAF = "Lleafagent/annotations/Leaf;";
     @Internal
     protected static final String COST_INIT_NAME = "<init>";
 
@@ -26,6 +25,11 @@ class LeafVisitor extends MethodVisitor {
     @Internal
     protected Type[] argumentArrays;
 
+    @Internal
+    protected boolean isNew = false;
+    @Internal
+    protected boolean isAddedThread = false;
+
     public LeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
         super(api, mv);
         this.className = className;
@@ -36,7 +40,7 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        if (COST_ANNOTATION_LEAF.equals(desc)) {
+        if (Type.getDescriptor(Leaf.class).equals(desc)) {
             isInjected = true;
         }
         return super.visitAnnotation(desc, visible);
@@ -44,101 +48,91 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitCode() {
-        if (isInjected) {
+        if (isInjected || COST_INIT_NAME.equals(methodName)) {
             afterStart();
-        }
-        if (COST_INIT_NAME.equals(methodName)) {
-            intoInit();
-            startBranch();
         }
     }
 
+    @Override
+    public void visitTypeInsn(int opcode, String type) {
+        isNew = (opcode == Opcodes.NEW);
+        super.visitTypeInsn(opcode, type);
+    }
+
+    @Override
+    public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+        if (isInterface && isNew && !isAddedThread && owner.equals(Type.getInternalName(Thread.class)) && name.equals(COST_INIT_NAME)) {
+            isAddedThread = true;
+            addLeaf(owner + "." + name);
+            addLeafStartTime(owner + "." + name);
+            isAddedThread = false;
+        }
+        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+    }
+
     protected void afterStart() {
-        String descTrunk = Type.getDescriptor(LeafContainer.class);
-        mv.visitTypeInsn(
-                Opcodes.NEW,
-                descTrunk.substring(1, descTrunk.length()-1)
-        );
+        addLeaf(className+"."+methodName);
+        addLeafStartTime(className+"."+methodName);
+    }
+
+    private void addLeaf(String leafName) {
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(LeafContainer.class));
         mv.visitInsn(Opcodes.DUP);
-        mv.visitLdcInsn(methodName);
-        mv.visitLdcInsn(className);
+        mv.visitLdcInsn(leafName);
         mv.visitMethodInsn(
                 Opcodes.INVOKESPECIAL,
                 Type.getInternalName(LeafContainer.class),
                 COST_INIT_NAME,
-                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")V"
+                "("+Type.getDescriptor(String.class)+")V"
         );
-        mv.visitVarInsn(Opcodes.ASTORE, 2);
-        // LINENUMBER 7 L0
-        //    NEW leafagent/info/LeafContainer
-        //    DUP
-        //    LDC "nameS"
-        //    LDC "nameP"
-        //    INVOKESPECIAL leafagent/info/LeafContainer.<init> (Ljava/lang/String;Ljava/lang/String;)V
-        //    ASTORE 1
-        // LINENUMBER 8 L1
-        //    ALOAD 1
-        //    INVOKEVIRTUAL leafagent/info/LeafContainer.startTime ()V
-        // LINENUMBER 11 L4
-        //    ALOAD 1
-        //    INVOKEVIRTUAL leafagent/info/LeafContainer.endTime ()V
-        mv.visitVarInsn(Opcodes.ALOAD, 2);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "addNew",
+                "("+Type.getDescriptor(BaseContainer.class)+")V"
+        );
+    }
+
+    private void addLeafStartTime(String leafName) {
+        mv.visitLdcInsn(leafName);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "get",
+                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
+        );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(LeafContainer.class),
+                Type.getInternalName(BaseContainer.class),
                 "startTime",
                 "()V"
         );
     }
 
     protected void beforeReturn() {
-        mv.visitVarInsn(Opcodes.ALOAD, 2);
+        addLeafEndTime(className+"."+methodName);
+    }
+
+    private void addLeafEndTime(String leafName) {
+        mv.visitLdcInsn(leafName);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "get",
+                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
+        );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(LeafContainer.class),
+                Type.getInternalName(BaseContainer.class),
                 "endTime",
-                "()V"
-        );
-    }
-
-    protected void intoInit() {
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(BranchContainer.class));
-        mv.visitInsn(Opcodes.DUP);
-        mv.visitLdcInsn(className);
-        mv.visitMethodInsn(
-                Opcodes.INVOKESPECIAL,
-                Type.getInternalName(BranchContainer.class),
-                COST_INIT_NAME,
-                "(Ljava/lang/String;)V"
-        );
-        mv.visitFieldInsn(
-                Opcodes.PUTFIELD,
-                className,
-                "branchContainer",
-                Type.getDescriptor(BranchContainer.class)
-        );
-    }
-
-    private void startBranch() {
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(
-                Opcodes.GETFIELD,
-                className,
-                "branchContainer",
-                Type.getDescriptor(BranchContainer.class)
-        );
-        mv.visitMethodInsn(
-                Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(BranchContainer.class),
-                "startTime",
                 "()V"
         );
     }
 
     @Override
     public void visitInsn(int opcode) {
-        if (isInjected && opcode == Opcodes.RETURN) {
+        if ((isInjected || COST_INIT_NAME.equals(methodName)) && opcode == Opcodes.RETURN) {
             beforeReturn();
         }
         super.visitInsn(opcode);

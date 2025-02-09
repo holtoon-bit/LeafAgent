@@ -8,7 +8,7 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     private LogWritableDAO dao;
 
     public JsonWritableRepositoryImpl(String path) {
-        dao = new JsonWritableDAOImpl(path);
+        dao = new JsonLinkedWritableDAOImpl(path);
     }
 
     @Override

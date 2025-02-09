@@ -18,6 +18,11 @@ public class TestClass extends TestClass1 {
         leafContainer.startTime(); //  <------
         leafContainer.endTime(); //  <------
     }
+
+    @Override
+    protected void onStart() {
+        System.out.println("SSSSSSSSSSSSS");
+    }
 }
 
 //// class version 65.0 (65)

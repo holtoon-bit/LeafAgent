@@ -1,6 +1,7 @@
 package leafagent.plugin;
 
 import leafagent.info.ActivityRoot;
+import leafagent.info.BaseContainer;
 import leafagent.info.BranchContainer;
 import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
@@ -26,14 +27,11 @@ public class ActivityLeafVisitor extends LeafVisitor {
     public void visitCode() {
         if (isInjected || COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName)) {
             afterStart();
-        }
-        else if (COST_CREATE_NAME.equals(methodName)) {
+        } else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
         }
     }
 
-    // Write an action on starting the Activity
-    // and create the BranchContainer
     private void intoInitActivity() {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitMethodInsn(
@@ -66,58 +64,34 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(TrunkContainer.class),
                 false
         );
-        mv.visitFieldInsn(
-                Opcodes.PUTFIELD,
-                className,
-                "trunkContainer",
-                Type.getDescriptor(TrunkContainer.class)
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "addNew",
+                "("+Type.getDescriptor(BaseContainer.class)+")V"
         );
-        super.intoInit();
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(
-                Opcodes.GETFIELD,
-                className,
-                "trunkContainer",
-                Type.getDescriptor(TrunkContainer.class)
+        mv.visitLdcInsn(className);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "get",
+                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(TrunkContainer.class),
+                Type.getInternalName(BaseContainer.class),
                 "startTime",
                 "()V"
         );
+        afterStart();
     }
 
-    // set the Start Time for the Branch
-    private void intoOnStart() {
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(
-                Opcodes.GETFIELD,
-                className,
-                "branchContainer",
-                Type.getDescriptor(BranchContainer.class)
-        );
-        mv.visitMethodInsn(
-                Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(BranchContainer.class),
-                "startTime",
-                "()V"
-        );
-    }
-
-    private void intoOnStop() {
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(
-                Opcodes.GETFIELD,
-                className,
-                "branchContainer",
-                Type.getDescriptor(BranchContainer.class)
-        );
-        mv.visitMethodInsn(
-                Opcodes.INVOKEVIRTUAL,
-                Type.getInternalName(BranchContainer.class),
-                "endTime",
-                "()V"
-        );
+    @Override
+    public void visitInsn(int opcode) {
+        if ((COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName) || COST_CREATE_NAME.equals(methodName))
+                && opcode == Opcodes.RETURN) {
+            beforeReturn();
+        }
+        mv.visitInsn(opcode);
     }
 }

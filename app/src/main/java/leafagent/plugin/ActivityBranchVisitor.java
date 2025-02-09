@@ -15,13 +15,13 @@ public class ActivityBranchVisitor extends BranchVisitor {
 
     public ActivityBranchVisitor(ClassVisitor classVisitor) {
         super(classVisitor);
-        cv.visitField(
-                Opcodes.ACC_PRIVATE,
-                "trunkContainer",
-                Type.getDescriptor(TrunkContainer.class),
-                null,
-                null
-        );
+//        cv.visitField(
+//                Opcodes.ACC_PRIVATE,
+//                "trunkContainer",
+//                Type.getDescriptor(TrunkContainer.class),
+//                null,
+//                null
+//        );
     }
 
     @Override

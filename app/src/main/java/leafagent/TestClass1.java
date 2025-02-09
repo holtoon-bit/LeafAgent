@@ -13,5 +13,7 @@ public class TestClass1 {
         return new TestClass1();
     }
 
-    protected void onStart() {}
+    protected void onStart() {
+        System.out.println("fffffffffffff");
+    }
 }

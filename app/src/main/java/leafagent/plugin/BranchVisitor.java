@@ -21,13 +21,6 @@ class BranchVisitor extends ClassVisitor {
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         super.visit(version, access, name, signature, superName, interfaces);
         this.className = name;
-        cv.visitField(
-                Opcodes.ACC_PRIVATE,
-                "branchContainer",
-                Type.getDescriptor(BranchContainer.class),
-                null,
-                null
-        );
     }
 
     @Override

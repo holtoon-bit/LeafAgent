@@ -5,21 +5,24 @@ import java.util.LinkedList;
 public class BaseInfo {
     private int id;
     private int parentId;
+    private String className;
     private final String name;
     private String desc = "";
     private long startMillis;
     private long endMillis;
-
     private LinkedList<BaseInfo> children;
+    private String threadName;
 
     public BaseInfo(Build builder) {
         this.id = builder.id;
         this.parentId = builder.parentId;
+        this.className = builder.className;
         this.name = builder.name;
         this.desc = builder.desc;
         this.startMillis = builder.startMillis;
         this.endMillis = builder.endMillis;
         this.children = builder.children;
+        this.threadName = builder.threadName;
     }
 
     public void setId(int id) {
@@ -38,12 +41,12 @@ public class BaseInfo {
         return parentId;
     }
 
+//    public void setClassName(String parentName) {
+//        this.className = parentName;
+//    }
+
     public String getName() {
         return name;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public String getDesc() {
@@ -74,6 +77,10 @@ public class BaseInfo {
         return children;
     }
 
+    public String getThreadName() {
+        return threadName;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -88,10 +95,12 @@ public class BaseInfo {
     public static class Build {
         protected int id;
         protected int parentId;
+        protected String className;
         protected String name;
         protected String desc = "";
         protected long startMillis;
         protected long endMillis;
+        protected String threadName;
 
         protected LinkedList<BaseInfo> children = new LinkedList<>();
 
@@ -110,6 +119,11 @@ public class BaseInfo {
             return this;
         }
 
+        public Build setClassName(String className) {
+            this.className = className;
+            return this;
+        }
+
         public Build setDesc(String desc) {
             this.desc = desc;
             return this;
@@ -122,6 +136,11 @@ public class BaseInfo {
 
         public Build setEndMillis(long endMillis) {
             this.endMillis = endMillis;
+            return this;
+        }
+
+        public Build setThreadName(String threadName) {
+            this.threadName = threadName;
             return this;
         }
 
