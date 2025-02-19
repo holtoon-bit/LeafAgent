@@ -6,6 +6,7 @@ import leafagent.info.BranchContainer;
 import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -25,11 +26,15 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitCode() {
-        if (isInjected || COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName)) {
+        if (COST_INIT_NAME.equals(methodName)) {
+            return;
+        }
+        if (COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName)) {
             afterStart();
         } else if (COST_CREATE_NAME.equals(methodName)) {
             intoInitActivity();
         }
+        super.visitCode();
     }
 
     private void intoInitActivity() {
@@ -88,10 +93,14 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitInsn(int opcode) {
-        if ((COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName) || COST_CREATE_NAME.equals(methodName))
-                && opcode == Opcodes.RETURN) {
+        if (COST_INIT_NAME.equals(methodName)) {
+            mv.visitInsn(opcode);
+            return;
+        }
+        if (opcode == Opcodes.RETURN &&
+                (COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName) || COST_CREATE_NAME.equals(methodName))) {
             beforeReturn();
         }
-        mv.visitInsn(opcode);
+        super.visitInsn(opcode);
     }
 }

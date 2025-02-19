@@ -3,19 +3,25 @@ package leafagent.plugin;
 import leafagent.annotations.Leaf;
 import leafagent.info.*;
 import org.gradle.api.tasks.Internal;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
+
+import java.util.Arrays;
+import java.util.LinkedList;
 
 class LeafVisitor extends MethodVisitor {
 
     @Internal
     protected static final String COST_INIT_NAME = "<init>";
+    @Internal
+    public static final String COST_RUN_ON_UI_THREAD_NAME = "runOnUiThread";
+    @Internal
+    public static final String COST_RUNNABLE_NAME = "run";
 
     @Internal
     protected boolean isInjected = false;
 
+    @Internal
+    protected int access;
     @Internal
     protected String className;
     @Internal
@@ -30,8 +36,12 @@ class LeafVisitor extends MethodVisitor {
     @Internal
     protected boolean isAddedThread = false;
 
+    @Internal
+    protected static LinkedList<String> lambdaInjected = new LinkedList<>();
+
     public LeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
         super(api, mv);
+        this.access = access;
         this.className = className;
         this.methodName = methodName;
         this.desc = desc;
@@ -48,7 +58,9 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitCode() {
-        if (isInjected || COST_INIT_NAME.equals(methodName)) {
+        System.out.println(lambdaInjected);
+        System.out.println(methodName + desc);
+        if (isInjected || COST_INIT_NAME.equals(methodName) || lambdaInjected.contains(methodName + desc)) {
             afterStart();
         }
     }
@@ -61,13 +73,25 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        if (isInjected && isNew && !isAddedThread && owner.equals(Type.getInternalName(Thread.class)) && name.equals(COST_INIT_NAME)) {
+        if (isInjected && (
+                (isNew && !isAddedThread && owner.equals(Type.getInternalName(Thread.class)) && name.equals(COST_INIT_NAME))
+                || name.equals(COST_RUN_ON_UI_THREAD_NAME)
+            )) {
             isAddedThread = true;
             addLeaf(owner + "." + name);
             addLeafStartTime(owner + "." + name);
             isAddedThread = false;
         }
         super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+    }
+
+    @Override
+    public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle, Object... bootstrapMethodArguments) {
+        if (isInjected && name.equals(COST_RUNNABLE_NAME)) {
+            String nameLambda = Arrays.stream(bootstrapMethodArguments).toList().get(1).toString();
+            lambdaInjected.add(Arrays.stream(Arrays.stream(nameLambda.split("\\.")).toList().get(1).split(" ")).toList().get(0));
+        }
+        super.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
     }
 
     protected void afterStart() {
@@ -131,7 +155,7 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitInsn(int opcode) {
-        if ((isInjected || COST_INIT_NAME.equals(methodName)) && opcode == Opcodes.RETURN) {
+        if (opcode == Opcodes.RETURN && (isInjected || COST_INIT_NAME.equals(methodName) || lambdaInjected.contains(methodName + desc))) {
             beforeReturn();
         }
         super.visitInsn(opcode);

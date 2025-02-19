@@ -4,16 +4,19 @@ import com.google.gson.Gson;
 import leafagent.info.BaseInfo;
 
 import java.io.*;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
+    private final String DEFAULT_THREAD_NAME = "java/lang/Thread.<init>";
+    private final String RUN_ON_UI_THREAD_NAME = "runOnUiThread";
+
     private File file;
     private Gson gson;
 
     private static LinkedList<BaseInfo> arrayChildren = new LinkedList<>();
     private BufferedWriter bufferedWriter;
-    private HashSet<String> threadsSet = new HashSet<>();
+    private static HashMap<String, Integer> threadsId = new HashMap<>();
 
     public JsonLinkedWritableDAOImpl(String path) {
         gson = new Gson();
@@ -27,18 +30,32 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
 
     @Override
     public void create(BaseInfo info) {
+        info.setId(arrayChildren.size()+1);
+
+        if (info.getName().equals(DEFAULT_THREAD_NAME)) {
+            threadsId.put(info.getName(), info.getId());
+        }
+
         if (info.getParentId() != -1) {
-            for (int i = arrayChildren.size() - 1; i >= 0; i--) {
-                if (arrayChildren.get(i).getEndMillis() == 0 &&
-                        (arrayChildren.get(i).getThreadName().equals(info.getThreadName())
-                                || !threadsSet.contains(info.getThreadName()))) {
-                    threadsSet.add(info.getThreadName());
-                    info.setParentId(arrayChildren.get(i).getId());
-                    break;
+            if (!threadsId.containsKey(info.getThreadName()) && !info.getThreadName().equals("main")) {
+                info.setParentId(threadsId.get(DEFAULT_THREAD_NAME));
+                threadsId.remove(DEFAULT_THREAD_NAME);
+                threadsId.put(info.getThreadName(), info.getParentId());
+            } else if (arrayChildren.getLast().getName().contains(RUN_ON_UI_THREAD_NAME) && info.getName().contains("lambda$")) {
+                info.setParentId(arrayChildren.getLast().getId());
+            } else {
+                for (int i = arrayChildren.size() - 1; i >= 0; i--) {
+                    if (arrayChildren.get(i).getThreadName().equals(info.getThreadName())) {
+                        if (arrayChildren.get(i).getEndMillis() == 0 && !arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME)) {
+                            info.setParentId(arrayChildren.get(i).getId());
+                            break;
+                        } else if (threadsId.containsKey(info.getThreadName())) {
+                            info.setParentId(threadsId.get(info.getThreadName()));
+                        }
+                    }
                 }
             }
         }
-        info.setId(arrayChildren.size());
         arrayChildren.add(info);
 
         try {

@@ -15,13 +15,9 @@ public class BaseContainer<T extends BaseContainer> {
     public BaseContainer(String name) {
         super();
         this.name = name;
-        info = new BaseInfo.Build().setName(name).setThreadName(Thread.currentThread().getName()).build();
+        String threadName = Thread.currentThread().getName();
+        info = new BaseInfo.Build().setName(name).setThreadName(threadName).build();
         writer = new JsonWriter("logg");
-    }
-
-    public BaseContainer(String name, String className) {
-        this(name);
-//        info.setClassName(className);
     }
 
     public LogWriter getWriter() {
@@ -41,7 +37,6 @@ public class BaseContainer<T extends BaseContainer> {
     }
 
     public void startTime() {
-        System.out.println("startTime " + info.getName());
         info.setStartMillis(System.currentTimeMillis());
         getWriter().writeLeaf(info);
     }
