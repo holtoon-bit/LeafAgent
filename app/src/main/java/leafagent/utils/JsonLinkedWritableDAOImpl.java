@@ -41,17 +41,22 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
                 info.setParentId(threadsId.get(DEFAULT_THREAD_NAME));
                 threadsId.remove(DEFAULT_THREAD_NAME);
                 threadsId.put(info.getThreadName(), info.getParentId());
-            } else if (arrayChildren.getLast().getName().contains(RUN_ON_UI_THREAD_NAME) && info.getName().contains("lambda$")) {
-                info.setParentId(arrayChildren.getLast().getId());
+            } else if (info.getName().contains("lambda$")) {
+                for (int i = arrayChildren.size() - 1; i >= 0; i--) {
+                    if ((arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME) || arrayChildren.get(i).getName().contains(RUN_ON_UI_THREAD_NAME))
+                            && arrayChildren.get(i).getEndMillis() == 0) {
+                        info.setParentId(arrayChildren.get(i).getId());
+                        break;
+                    }
+                }
             } else {
                 for (int i = arrayChildren.size() - 1; i >= 0; i--) {
-                    if (arrayChildren.get(i).getThreadName().equals(info.getThreadName())) {
-                        if (arrayChildren.get(i).getEndMillis() == 0 && !arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME)) {
-                            info.setParentId(arrayChildren.get(i).getId());
-                            break;
-                        } else if (threadsId.containsKey(info.getThreadName())) {
-                            info.setParentId(threadsId.get(info.getThreadName()));
-                        }
+                    if (arrayChildren.get(i).getThreadName().equals(info.getThreadName())
+                            && !arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME)
+                            && !(arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME) || arrayChildren.get(i).getName().contains(RUN_ON_UI_THREAD_NAME))
+                            && arrayChildren.get(i).getEndMillis() == 0) {
+                        info.setParentId(arrayChildren.get(i).getId());
+                        break;
                     }
                 }
             }
