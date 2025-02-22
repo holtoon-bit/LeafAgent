@@ -1,16 +1,13 @@
 package leafagent.info;
 
-import java.util.LinkedList;
-
 public class BaseInfo {
     private int id;
     private int parentId;
-    private String className;
     private final String name;
     private String desc = "";
+    private String className;
     private long startMillis;
     private long endMillis;
-    private LinkedList<BaseInfo> children;
     private String threadName;
 
     public BaseInfo(Build builder) {
@@ -21,7 +18,6 @@ public class BaseInfo {
         this.desc = builder.desc;
         this.startMillis = builder.startMillis;
         this.endMillis = builder.endMillis;
-        this.children = builder.children;
         this.threadName = builder.threadName;
     }
 
@@ -41,9 +37,13 @@ public class BaseInfo {
         return parentId;
     }
 
-//    public void setClassName(String parentName) {
-//        this.className = parentName;
-//    }
+    public void setClassName(String parentName) {
+        this.className = parentName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
 
     public String getName() {
         return name;
@@ -69,14 +69,6 @@ public class BaseInfo {
         this.endMillis = endMillis;
     }
 
-    public void addChild(BaseInfo info) {
-        children.add(info);
-    }
-
-    public LinkedList<BaseInfo> getChildren() {
-        return children;
-    }
-
     public String getThreadName() {
         return threadName;
     }
@@ -95,14 +87,12 @@ public class BaseInfo {
     public static class Build {
         protected int id;
         protected int parentId;
-        protected String className;
         protected String name;
         protected String desc = "";
+        protected String className;
         protected long startMillis;
         protected long endMillis;
         protected String threadName;
-
-        protected LinkedList<BaseInfo> children = new LinkedList<>();
 
         public Build setId(int id) {
             this.id = id;
@@ -145,10 +135,10 @@ public class BaseInfo {
         }
 
         public BaseInfo build() {
-            if (!name.isEmpty()) {
+            if (!name.isEmpty() && !className.isEmpty()) {
                 return new BaseInfo(this);
             }
-            throw new NullPointerException("Set the name value, for create new the BaseInfo");
+            throw new NullPointerException("Set the name and className values, for create new the BaseInfo");
         }
     }
 }

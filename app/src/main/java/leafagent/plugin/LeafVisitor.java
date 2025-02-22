@@ -58,8 +58,6 @@ class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitCode() {
-        System.out.println(lambdaInjected);
-        System.out.println(methodName + desc);
         if (isInjected || COST_INIT_NAME.equals(methodName) || lambdaInjected.contains(methodName + desc)) {
             afterStart();
         }

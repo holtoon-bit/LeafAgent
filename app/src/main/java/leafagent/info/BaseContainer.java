@@ -3,20 +3,19 @@ package leafagent.info;
 import leafagent.utils.JsonWriter;
 import leafagent.utils.LogWriter;
 
-public class BaseContainer<T extends BaseContainer> {
-    private String name;
-
+public class BaseContainer {
     protected BaseInfo info;
     private LogWriter writer;
 
     public BaseContainer() {
     }
 
-    public BaseContainer(String name) {
-        super();
-        this.name = name;
-        String threadName = Thread.currentThread().getName();
-        info = new BaseInfo.Build().setName(name).setThreadName(threadName).build();
+    public BaseContainer(String name, String className) {
+        info = new BaseInfo.Build()
+                .setName(name)
+                .setClassName(className)
+                .setThreadName(Thread.currentThread().getName())
+                .build();
         writer = new JsonWriter("logg");
     }
 
@@ -29,11 +28,7 @@ public class BaseContainer<T extends BaseContainer> {
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void addChild(BaseContainer container) {
-        info.addChild(container.getInfo());
+        return info.getName();
     }
 
     public void startTime() {
@@ -49,11 +44,11 @@ public class BaseContainer<T extends BaseContainer> {
     @Override
     public boolean equals(Object obj) {
         BaseContainer obj2 = (BaseContainer) obj;
-        return info.equals(obj2.getInfo()) && name.equals(obj2.getName());
+        return info.equals(obj2.getInfo()) && info.getName().equals(obj2.getName());
     }
 
     @Override
     public int hashCode() {
-        return info.hashCode() + name.hashCode();
+        return info.hashCode() + info.getName().hashCode();
     }
 }

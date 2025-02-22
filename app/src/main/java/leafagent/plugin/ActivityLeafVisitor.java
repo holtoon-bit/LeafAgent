@@ -1,12 +1,10 @@
 package leafagent.plugin;
 
-import leafagent.info.ActivityRoot;
 import leafagent.info.BaseContainer;
-import leafagent.info.BranchContainer;
+import leafagent.info.LeafContainer;
 import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -60,14 +58,20 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "("+Type.getDescriptor(String.class)+")V",
                 false
         );
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        addTrunk(className);
+        addTrunkStart(className);
+        afterStart();
+    }
+
+    private void addTrunk(String className) {
+        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(TrunkContainer.class));
+        mv.visitInsn(Opcodes.DUP);
         mv.visitLdcInsn(className);
         mv.visitMethodInsn(
-                Opcodes.INVOKESTATIC,
-                Type.getInternalName(ActivityRoot.class),
-                "createChild",
-                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(TrunkContainer.class),
-                false
+                Opcodes.INVOKESPECIAL,
+                Type.getInternalName(LeafContainer.class),
+                COST_INIT_NAME,
+                "("+Type.getDescriptor(String.class)+")V"
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
@@ -75,6 +79,9 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "addNew",
                 "("+Type.getDescriptor(BaseContainer.class)+")V"
         );
+    }
+
+    private void addTrunkStart(String className) {
         mv.visitLdcInsn(className);
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
@@ -88,7 +95,6 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "startTime",
                 "()V"
         );
-        afterStart();
     }
 
     @Override
