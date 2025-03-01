@@ -10,4 +10,5 @@ public interface LogWritable {
     void updateLeaf(BaseInfo info);
     Collection<BaseInfo> getStruct();
     void clear();
+    void save();
 }

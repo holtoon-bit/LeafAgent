@@ -8,14 +8,14 @@ import org.objectweb.asm.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-class LeafVisitor extends MethodVisitor {
+public class LeafVisitor extends MethodVisitor {
 
     @Internal
-    protected static final String COST_INIT_NAME = "<init>";
-    @Internal
-    public static final String COST_RUN_ON_UI_THREAD_NAME = "runOnUiThread";
+    public static final String COST_INIT_NAME = "<init>";
     @Internal
     public static final String COST_RUNNABLE_NAME = "run";
+    @Internal
+    public static final String COST_RUN_ON_UI_THREAD_NAME = "runOnUiThread";
 
     @Internal
     protected boolean isInjected = false;
@@ -32,6 +32,9 @@ class LeafVisitor extends MethodVisitor {
     protected Type[] argumentArrays;
 
     @Internal
+    protected String description = "";
+
+    @Internal
     protected boolean isNew = false;
     @Internal
     protected boolean isAddedThread = false;
@@ -39,13 +42,16 @@ class LeafVisitor extends MethodVisitor {
     @Internal
     protected static LinkedList<String> lambdaInjected = new LinkedList<>();
 
-    public LeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
+    public LeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc, String branchDescription) {
         super(api, mv);
         this.access = access;
         this.className = className;
         this.methodName = methodName;
         this.desc = desc;
         argumentArrays = Type.getArgumentTypes(desc);
+        if (methodName.equals(COST_INIT_NAME)) {
+            this.description = branchDescription;
+        }
     }
 
     @Override
@@ -53,7 +59,7 @@ class LeafVisitor extends MethodVisitor {
         if (Type.getDescriptor(Leaf.class).equals(desc)) {
             isInjected = true;
         }
-        return super.visitAnnotation(desc, visible);
+        return new LeafAnnotationVisitor(api, super.visitAnnotation(desc, visible));
     }
 
     @Override
@@ -75,9 +81,10 @@ class LeafVisitor extends MethodVisitor {
                 (isNew && !isAddedThread && owner.equals(Type.getInternalName(Thread.class)) && name.equals(COST_INIT_NAME))
                 || name.equals(COST_RUN_ON_UI_THREAD_NAME)
             )) {
+            this.description = "";
             isAddedThread = true;
-            addLeaf(owner + "." + name);
-            addLeafStartTime(owner + "." + name);
+            addLeaf(name, owner);
+            addLeafStartTime(name, owner);
             isAddedThread = false;
         }
         super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
@@ -93,19 +100,21 @@ class LeafVisitor extends MethodVisitor {
     }
 
     protected void afterStart() {
-        addLeaf(className+"."+methodName);
-        addLeafStartTime(className+"."+methodName);
+        addLeaf(methodName, className);
+        addLeafStartTime(methodName, className);
     }
 
-    private void addLeaf(String leafName) {
+    protected void addLeaf(String leafName, String className) {
         mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(LeafContainer.class));
         mv.visitInsn(Opcodes.DUP);
         mv.visitLdcInsn(leafName);
+        mv.visitLdcInsn(className);
+        mv.visitLdcInsn(description);
         mv.visitMethodInsn(
                 Opcodes.INVOKESPECIAL,
                 Type.getInternalName(LeafContainer.class),
                 COST_INIT_NAME,
-                "("+Type.getDescriptor(String.class)+")V"
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")V"
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
@@ -115,13 +124,14 @@ class LeafVisitor extends MethodVisitor {
         );
     }
 
-    private void addLeafStartTime(String leafName) {
+    protected void addLeafStartTime(String leafName, String className) {
         mv.visitLdcInsn(leafName);
+        mv.visitLdcInsn(className);
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
                 Type.getInternalName(CreatedContainers.class),
                 "get",
-                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
@@ -132,16 +142,17 @@ class LeafVisitor extends MethodVisitor {
     }
 
     protected void beforeReturn() {
-        addLeafEndTime(className+"."+methodName);
+        addLeafEndTime(methodName, className);
     }
 
-    private void addLeafEndTime(String leafName) {
+    protected void addLeafEndTime(String leafName, String className) {
         mv.visitLdcInsn(leafName);
+        mv.visitLdcInsn(className);
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
                 Type.getInternalName(CreatedContainers.class),
                 "get",
-                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
@@ -157,5 +168,19 @@ class LeafVisitor extends MethodVisitor {
             beforeReturn();
         }
         super.visitInsn(opcode);
+    }
+
+    private class LeafAnnotationVisitor extends AnnotationVisitor {
+        protected LeafAnnotationVisitor(int api, AnnotationVisitor av) {
+            super(api, av);
+        }
+
+        @Override
+        public void visit(String name, Object value) {
+            if (name.equals("desc")) {
+                description = (String) value;
+            }
+            av.visit(name, value);
+        }
     }
 }

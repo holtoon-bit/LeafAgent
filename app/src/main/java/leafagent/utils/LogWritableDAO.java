@@ -11,4 +11,5 @@ public interface LogWritableDAO {
     void update(BaseInfo info);
     void remove(BaseInfo info);
     void removeAll();
+    void save();
 }

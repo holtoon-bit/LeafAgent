@@ -13,6 +13,8 @@ public class ActivityBranchVisitor extends BranchVisitor {
     private boolean isOnStartCreated = false;
     @Internal
     private boolean isOnStopCreated = false;
+    @Internal
+    private boolean isOnDestroyCreated = false;
 
     public ActivityBranchVisitor(ClassVisitor classVisitor) {
         super(classVisitor);
@@ -27,9 +29,12 @@ public class ActivityBranchVisitor extends BranchVisitor {
             case (ActivityLeafVisitor.COST_STOP_NAME):
                 isOnStopCreated = true;
                 break;
+            case (ActivityLeafVisitor.COST_DESTROY_NAME):
+                isOnDestroyCreated = true;
+                break;
         }
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions);
-        return new ActivityLeafVisitor(Opcodes.ASM5, methodVisitor, access, className, name, desc);
+        return new ActivityLeafVisitor(Opcodes.ASM5, methodVisitor, access, className, name, desc, branchDescription);
     }
 
     @Override
@@ -40,12 +45,15 @@ public class ActivityBranchVisitor extends BranchVisitor {
         if (!isOnStopCreated) {
             createActivitySuperFunction(Opcodes.ACC_PROTECTED, COST_APP_COMPAT_ACTIVITY_NAME, ActivityLeafVisitor.COST_STOP_NAME, "()V", null, null);
         }
+        if (!isOnDestroyCreated) {
+            createActivitySuperFunction(Opcodes.ACC_PROTECTED, COST_APP_COMPAT_ACTIVITY_NAME, ActivityLeafVisitor.COST_DESTROY_NAME, "()V", null, null);
+        }
         super.visitEnd();
     }
 
     private void createActivitySuperFunction(int access, String owner, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor smv = super.visitMethod(access, name, desc, signature, exceptions);
-        smv = new ActivityLeafVisitor(Opcodes.ASM5, smv, access, className, name, desc);
+        smv = new ActivityLeafVisitor(Opcodes.ASM5, smv, access, className, name, desc, branchDescription);
         smv.visitCode();
         smv.visitVarInsn(Opcodes.ALOAD, 0);
         smv.visitMethodInsn(Opcodes.INVOKESPECIAL, owner, name, desc, false);

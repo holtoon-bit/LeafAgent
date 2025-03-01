@@ -1,7 +1,6 @@
 package leafagent.plugin;
 
 import leafagent.info.BaseContainer;
-import leafagent.info.LeafContainer;
 import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
@@ -17,19 +16,24 @@ public class ActivityLeafVisitor extends LeafVisitor {
     public static final String COST_START_NAME = "onStart";
     @Internal
     public static final String COST_STOP_NAME = "onStop";
+    @Internal
+    public static final String COST_DESTROY_NAME = "onDestroy";
 
-    public ActivityLeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc) {
-        super(api, mv, access, className, methodName, desc);
+    public ActivityLeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc, String branchDescription) {
+        super(api, mv, access, className, methodName, desc, branchDescription);
+        if (methodName.equals(COST_CREATE_NAME)) {
+            this.description = branchDescription;
+        }
     }
 
     @Override
     public void visitCode() {
-        if (COST_INIT_NAME.equals(methodName)) {
+        if (methodName.equals(COST_INIT_NAME)) {
             return;
         }
-        if (COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName)) {
+        if (methodName.equals(COST_START_NAME) || methodName.equals(COST_STOP_NAME)) {
             afterStart();
-        } else if (COST_CREATE_NAME.equals(methodName)) {
+        } else if (methodName.equals(COST_CREATE_NAME)) {
             intoInitActivity();
         }
         super.visitCode();
@@ -59,19 +63,22 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 false
         );
         addTrunk(className);
-        addTrunkStart(className);
+        addTrunkStartTime(className);
+        if (methodName.equals(COST_CREATE_NAME)) { this.description = ""; }
         afterStart();
     }
 
     private void addTrunk(String className) {
         mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(TrunkContainer.class));
         mv.visitInsn(Opcodes.DUP);
+        mv.visitLdcInsn(className.substring(className.lastIndexOf("/")+1));
         mv.visitLdcInsn(className);
+        mv.visitLdcInsn(description);
         mv.visitMethodInsn(
                 Opcodes.INVOKESPECIAL,
-                Type.getInternalName(LeafContainer.class),
+                Type.getInternalName(TrunkContainer.class),
                 COST_INIT_NAME,
-                "("+Type.getDescriptor(String.class)+")V"
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")V"
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
@@ -81,13 +88,14 @@ public class ActivityLeafVisitor extends LeafVisitor {
         );
     }
 
-    private void addTrunkStart(String className) {
+    private void addTrunkStartTime(String className) {
+        mv.visitLdcInsn(className.substring(className.lastIndexOf("/")+1));
         mv.visitLdcInsn(className);
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
                 Type.getInternalName(CreatedContainers.class),
                 "get",
-                "("+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
@@ -97,15 +105,23 @@ public class ActivityLeafVisitor extends LeafVisitor {
         );
     }
 
+    private void beforeDestroyReturn() {
+        addLeafEndTime(className, className);
+    }
+
     @Override
     public void visitInsn(int opcode) {
-        if (COST_INIT_NAME.equals(methodName)) {
+        if (methodName.equals(COST_INIT_NAME)) {
             mv.visitInsn(opcode);
             return;
         }
         if (opcode == Opcodes.RETURN &&
-                (COST_START_NAME.equals(methodName) || COST_STOP_NAME.equals(methodName) || COST_CREATE_NAME.equals(methodName))) {
+                (methodName.equals(COST_START_NAME)
+                        || methodName.equals(COST_STOP_NAME)
+                        || methodName.equals(COST_CREATE_NAME))) {
             beforeReturn();
+        } else if (opcode == Opcodes.RETURN && methodName.equals(COST_DESTROY_NAME)) {
+            beforeDestroyReturn();
         }
         super.visitInsn(opcode);
     }

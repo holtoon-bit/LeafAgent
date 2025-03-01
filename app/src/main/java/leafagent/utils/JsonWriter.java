@@ -35,4 +35,9 @@ public class JsonWriter extends LogWriter {
     public void clear() {
         jsonRepository.removeAll();
     }
+
+    @Override
+    public void save() {
+        jsonRepository.save();
+    }
 }

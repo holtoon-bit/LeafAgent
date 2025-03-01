@@ -2,48 +2,48 @@ package leafagent.utils;
 
 import com.google.gson.Gson;
 import leafagent.info.BaseInfo;
+import leafagent.plugin.LeafVisitor;
+import org.objectweb.asm.Type;
 
-import java.io.*;
+import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
-    private final String DEFAULT_THREAD_NAME = "java/lang/Thread.<init>";
-    private final String RUN_ON_UI_THREAD_NAME = "runOnUiThread";
+    public static final String KEY_THREAD_NAME = "newThread";
 
-    private File file;
+    private String path;
     private Gson gson;
 
     private static LinkedList<BaseInfo> arrayChildren = new LinkedList<>();
-    private BufferedWriter bufferedWriter;
     private static HashMap<String, Integer> threadsId = new HashMap<>();
 
     public JsonLinkedWritableDAOImpl(String path) {
+        this.path = path;
         gson = new Gson();
-        file = new File(path);
-        try {
-            bufferedWriter = new BufferedWriter(new FileWriter(file));
-        } catch (IOException e) {
-            System.out.println(e);
-        }
     }
 
     @Override
     public void create(BaseInfo info) {
         info.setId(arrayChildren.size()+1);
 
-        if (info.getName().equals(DEFAULT_THREAD_NAME)) {
-            threadsId.put(info.getName(), info.getId());
+        if (info.getClassName().equals(Type.getInternalName(Thread.class))
+                && info.getName().equals(LeafVisitor.COST_INIT_NAME)) {
+            threadsId.put(KEY_THREAD_NAME, info.getId());
         }
 
         if (info.getParentId() != -1) {
             if (!threadsId.containsKey(info.getThreadName()) && !info.getThreadName().equals("main")) {
-                info.setParentId(threadsId.get(DEFAULT_THREAD_NAME));
-                threadsId.remove(DEFAULT_THREAD_NAME);
+                info.setParentId(threadsId.get(KEY_THREAD_NAME));
+                threadsId.remove(KEY_THREAD_NAME);
                 threadsId.put(info.getThreadName(), info.getParentId());
             } else if (info.getName().contains("lambda$")) {
                 for (int i = arrayChildren.size() - 1; i >= 0; i--) {
-                    if ((arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME) || arrayChildren.get(i).getName().contains(RUN_ON_UI_THREAD_NAME))
+                    if ((arrayChildren.get(i).getClassName().equals(Type.getInternalName(Thread.class))
+                                && arrayChildren.get(i).getName().equals(LeafVisitor.COST_INIT_NAME)
+                                || arrayChildren.get(i).getName().contains(LeafVisitor.COST_RUN_ON_UI_THREAD_NAME))
                             && arrayChildren.get(i).getEndMillis() == 0) {
                         info.setParentId(arrayChildren.get(i).getId());
                         break;
@@ -52,8 +52,9 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
             } else {
                 for (int i = arrayChildren.size() - 1; i >= 0; i--) {
                     if (arrayChildren.get(i).getThreadName().equals(info.getThreadName())
-                            && !arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME)
-                            && !(arrayChildren.get(i).getName().equals(DEFAULT_THREAD_NAME) || arrayChildren.get(i).getName().contains(RUN_ON_UI_THREAD_NAME))
+                            && !(arrayChildren.get(i).getClassName().equals(Type.getInternalName(Thread.class))
+                                && arrayChildren.get(i).getName().equals(LeafVisitor.COST_INIT_NAME))
+                            && !arrayChildren.get(i).getName().contains(LeafVisitor.COST_RUN_ON_UI_THREAD_NAME)
                             && arrayChildren.get(i).getEndMillis() == 0) {
                         info.setParentId(arrayChildren.get(i).getId());
                         break;
@@ -62,13 +63,7 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
             }
         }
         arrayChildren.add(info);
-
-        try {
-            System.out.println(gson.toJson(arrayChildren.toArray()));
-            bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        System.out.println(gson.toJson(arrayChildren.toArray()));
     }
 
     @Override
@@ -95,5 +90,16 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     @Override
     public void removeAll() {
         arrayChildren.clear();
+    }
+
+    @Override
+    public void save() {
+        File file = new File(path);
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+            bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }

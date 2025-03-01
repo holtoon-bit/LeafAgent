@@ -135,10 +135,10 @@ public class BaseInfo {
         }
 
         public BaseInfo build() {
-            if (!name.isEmpty() && !className.isEmpty()) {
+            if (!name.isEmpty()) {
                 return new BaseInfo(this);
             }
-            throw new NullPointerException("Set the name and className values, for create new the BaseInfo");
+            throw new NullPointerException("Set the name value, for create new the BaseInfo");
         }
     }
 }

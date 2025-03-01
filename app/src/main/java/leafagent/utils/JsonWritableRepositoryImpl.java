@@ -37,7 +37,10 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     }
 
     @Override
-    public void removeAll() {
+    public void removeAll() {}
 
+    @Override
+    public void save() {
+        dao.save();
     }
 }
