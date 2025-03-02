@@ -15,6 +15,8 @@ public class ActivityBranchVisitor extends BranchVisitor {
     private boolean isOnStopCreated = false;
     @Internal
     private boolean isOnDestroyCreated = false;
+    @Internal
+    private boolean isInitCreated = false;
 
     public ActivityBranchVisitor(ClassVisitor classVisitor) {
         super(classVisitor);
@@ -32,6 +34,9 @@ public class ActivityBranchVisitor extends BranchVisitor {
             case (ActivityLeafVisitor.COST_DESTROY_NAME):
                 isOnDestroyCreated = true;
                 break;
+            case (ActivityLeafVisitor.COST_INIT_NAME):
+                isInitCreated = true;
+                break;
         }
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions);
         return new ActivityLeafVisitor(Opcodes.ASM5, methodVisitor, access, className, name, desc, branchDescription);
@@ -47,6 +52,9 @@ public class ActivityBranchVisitor extends BranchVisitor {
         }
         if (!isOnDestroyCreated) {
             createActivitySuperFunction(Opcodes.ACC_PROTECTED, COST_APP_COMPAT_ACTIVITY_NAME, ActivityLeafVisitor.COST_DESTROY_NAME, "()V", null, null);
+        }
+        if (!isInitCreated) {
+            createActivitySuperFunction(Opcodes.ACC_PUBLIC, "", ActivityLeafVisitor.COST_INIT_NAME, "()V", null, null);
         }
         super.visitEnd();
     }

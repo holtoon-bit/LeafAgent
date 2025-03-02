@@ -21,25 +21,27 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     public ActivityLeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc, String branchDescription) {
         super(api, mv, access, className, methodName, desc, branchDescription);
-        if (methodName.equals(COST_CREATE_NAME)) {
+        if (methodName.equals(COST_INIT_NAME)) {
             this.description = branchDescription;
         }
     }
 
     @Override
     public void visitCode() {
-        if (methodName.equals(COST_INIT_NAME)) {
-            return;
+        switch (methodName) {
+            case COST_START_NAME, COST_STOP_NAME -> afterStart();
+            case COST_CREATE_NAME -> intoOnCreateActivity();
+            case COST_INIT_NAME -> intoInitActivity();
+            default -> super.visitCode();
         }
-        if (methodName.equals(COST_START_NAME) || methodName.equals(COST_STOP_NAME)) {
-            afterStart();
-        } else if (methodName.equals(COST_CREATE_NAME)) {
-            intoInitActivity();
-        }
-        super.visitCode();
     }
 
     private void intoInitActivity() {
+        addTrunk(className);
+        addTrunkStartTime(className);
+    }
+
+    private void intoOnCreateActivity() {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
@@ -62,9 +64,6 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "("+Type.getDescriptor(String.class)+")V",
                 false
         );
-        addTrunk(className);
-        addTrunkStartTime(className);
-        if (methodName.equals(COST_CREATE_NAME)) { this.description = ""; }
         afterStart();
     }
 
@@ -111,18 +110,17 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitInsn(int opcode) {
-        if (methodName.equals(COST_INIT_NAME)) {
-            mv.visitInsn(opcode);
-            return;
+        if (opcode == Opcodes.RETURN && !methodName.equals(COST_INIT_NAME)) {
+            if (methodName.equals(COST_START_NAME)
+                    || methodName.equals(COST_STOP_NAME)
+                    || methodName.equals(COST_CREATE_NAME)) {
+                beforeReturn();
+            } else if (methodName.equals(COST_DESTROY_NAME)) {
+                beforeDestroyReturn();
+            } else {
+                super.visitInsn(opcode);
+            }
         }
-        if (opcode == Opcodes.RETURN &&
-                (methodName.equals(COST_START_NAME)
-                        || methodName.equals(COST_STOP_NAME)
-                        || methodName.equals(COST_CREATE_NAME))) {
-            beforeReturn();
-        } else if (opcode == Opcodes.RETURN && methodName.equals(COST_DESTROY_NAME)) {
-            beforeDestroyReturn();
-        }
-        super.visitInsn(opcode);
+        mv.visitInsn(opcode);
     }
 }
