@@ -135,7 +135,7 @@ public class BaseInfo {
         }
 
         public BaseInfo build() {
-            if (!name.isEmpty()) {
+            if (!name.isEmpty() && !className.isEmpty() && !threadName.isEmpty()) {
                 return new BaseInfo(this);
             }
             throw new NullPointerException("Set the name value, for create new the BaseInfo");

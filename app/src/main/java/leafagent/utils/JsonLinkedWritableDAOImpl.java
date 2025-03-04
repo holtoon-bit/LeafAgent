@@ -68,7 +68,7 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
 
     @Override
     public BaseInfo get(int id) {
-        return arrayChildren.get(id);
+        return arrayChildren.get(id-1);
     }
 
     @Override
@@ -94,10 +94,10 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
 
     @Override
     public void save() {
-        File file = new File(path);
         try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
             bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
+            bufferedWriter.flush();
         } catch (Exception e) {
             System.out.println(e);
         }

@@ -3,9 +3,10 @@ package leafagent.utils;
 import leafagent.info.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class JsonWriter extends LogWriter {
-    private LogWritableRepository jsonRepository;
+    private final LogWritableRepository jsonRepository;
 
     public JsonWriter(String name) {
         jsonRepository = createRepository(name);
@@ -27,8 +28,8 @@ public class JsonWriter extends LogWriter {
     }
 
     @Override
-    public ArrayList<BaseInfo> getStruct() {
-        return new ArrayList<>();
+    public Collection<BaseInfo> getStruct() {
+        return jsonRepository.getAll();
     }
 
     @Override

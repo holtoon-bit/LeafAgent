@@ -9,7 +9,7 @@ public class BaseContainer {
     private LogWriter writer;
 
     public BaseContainer() {
-        writer = new JsonWriter("logg");
+        writer = new JsonWriter("logg.json");
     }
 
     public BaseContainer(String name, String className) {

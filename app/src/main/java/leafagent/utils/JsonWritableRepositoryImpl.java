@@ -23,7 +23,7 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
 
     @Override
     public LinkedList<BaseInfo> getAll() {
-        return null;
+        return dao.getAll();
     }
 
     @Override
