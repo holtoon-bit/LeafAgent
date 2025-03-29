@@ -1,6 +1,7 @@
 package leafagent.plugin;
 
 import leafagent.info.BaseContainer;
+import leafagent.info.BranchContainer;
 import leafagent.info.TrunkContainer;
 import leafagent.utils.JsonWriter;
 import org.gradle.api.tasks.Internal;
@@ -19,17 +20,21 @@ public class ActivityLeafVisitor extends LeafVisitor {
     @Internal
     public static final String COST_DESTROY_NAME = "onDestroy";
 
+    @Internal
+    public final String activityName;
+
     public ActivityLeafVisitor(int api, MethodVisitor mv, int access, String className, String methodName, String desc, String branchDescription) {
         super(api, mv, access, className, methodName, desc, branchDescription);
         if (methodName.equals(COST_INIT_NAME)) {
             this.description = branchDescription;
         }
+        activityName = className.substring(className.lastIndexOf("/")+1);
     }
 
     @Override
     public void visitCode() {
         switch (methodName) {
-            case COST_START_NAME, COST_STOP_NAME -> afterStart();
+            case COST_START_NAME, COST_STOP_NAME -> afterBranchStart();
             case COST_CREATE_NAME -> intoOnCreateActivity();
             case COST_INIT_NAME -> intoInitActivity();
             default -> super.visitCode();
@@ -37,8 +42,8 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     private void intoInitActivity() {
-        addTrunk(className);
-        addTrunkStartTime(className);
+        addTrunk(methodName, className);
+        addTrunkStartTime(methodName, className);
     }
 
     private void intoOnCreateActivity() {
@@ -64,13 +69,55 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 "("+Type.getDescriptor(String.class)+")V",
                 false
         );
-        afterStart();
+        afterBranchStart();
     }
 
-    private void addTrunk(String className) {
+    public void afterBranchStart() {
+        addBranch(methodName, className);
+        addBranchStartTime(methodName, className);
+    }
+
+    protected void addBranch(String leafName, String className) {
+        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(BranchContainer.class));
+        mv.visitInsn(Opcodes.DUP);
+        mv.visitLdcInsn(leafName);
+        mv.visitLdcInsn(className);
+        mv.visitLdcInsn(description);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESPECIAL,
+                Type.getInternalName(BranchContainer.class),
+                COST_INIT_NAME,
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")V"
+        );
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "addNew",
+                "("+Type.getDescriptor(BaseContainer.class)+")V"
+        );
+    }
+
+    protected void addBranchStartTime(String leafName, String className) {
+        mv.visitLdcInsn(leafName);
+        mv.visitLdcInsn(className);
+        mv.visitMethodInsn(
+                Opcodes.INVOKESTATIC,
+                Type.getInternalName(CreatedContainers.class),
+                "get",
+                "("+Type.getDescriptor(String.class)+Type.getDescriptor(String.class)+")"+Type.getDescriptor(BaseContainer.class)
+        );
+        mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                Type.getInternalName(BaseContainer.class),
+                "startTime",
+                "()V"
+        );
+    }
+
+    private void addTrunk(String activityName, String className) {
         mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(TrunkContainer.class));
         mv.visitInsn(Opcodes.DUP);
-        mv.visitLdcInsn(className.substring(className.lastIndexOf("/")+1));
+        mv.visitLdcInsn(activityName);
         mv.visitLdcInsn(className);
         mv.visitLdcInsn(description);
         mv.visitMethodInsn(
@@ -87,8 +134,8 @@ public class ActivityLeafVisitor extends LeafVisitor {
         );
     }
 
-    private void addTrunkStartTime(String className) {
-        mv.visitLdcInsn(className.substring(className.lastIndexOf("/")+1));
+    private void addTrunkStartTime(String activityName, String className) {
+        mv.visitLdcInsn(activityName);
         mv.visitLdcInsn(className);
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
@@ -105,7 +152,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     private void beforeDestroyReturn() {
-        addLeafEndTime(className, className);
+        addLeafEndTime(activityName, className);
     }
 
     @Override

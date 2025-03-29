@@ -2,7 +2,8 @@ package leafagent.plugin;
 
 import com.android.build.api.instrumentation.FramesComputationMode;
 import com.android.build.api.instrumentation.InstrumentationScope;
-import com.android.build.api.variant.*;
+import com.android.build.api.variant.AndroidComponentsExtension;
+import com.android.build.api.variant.Variant;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;

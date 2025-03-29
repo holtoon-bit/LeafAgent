@@ -9,6 +9,7 @@ public interface LogWritable {
     void writeLeaf(BaseInfo info);
     void updateLeaf(BaseInfo info);
     Collection<BaseInfo> getStruct();
+    String getStringStruct();
     void clear();
     void save();
 }

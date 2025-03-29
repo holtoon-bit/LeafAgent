@@ -27,6 +27,11 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     }
 
     @Override
+    public String getJsonArray() {
+        return dao.getJsonArray();
+    }
+
+    @Override
     public void update(BaseInfo info) {
         dao.update(info);
     }
@@ -37,7 +42,7 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     }
 
     @Override
-    public void removeAll() {}
+    public void removeAll() {dao.removeAll();}
 
     @Override
     public void save() {

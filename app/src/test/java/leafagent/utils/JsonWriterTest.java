@@ -13,22 +13,17 @@ import java.util.*;
 class JsonWriterTest {
     private static String path;
 
-    private JsonWriter writer;
+    private static JsonWriter writer;
 
     @BeforeAll
     public static void setPath() {
         path = new File("src/test/resources/logTest.json").getAbsolutePath();
-    }
-
-    @BeforeEach
-    public void createWriter() {
         writer = new JsonWriter(path);
     }
 
-    @AfterEach
+    @BeforeEach
     public void clearWriter() {
         writer.clear();
-        writer = null;
     }
 
     @Test

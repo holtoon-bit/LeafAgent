@@ -1,12 +1,19 @@
 package leafagent.info;
 
-public class TrunkContainer extends LeafContainer {
+import leafagent.utils.AdbLeafSetting;
+
+public class TrunkContainer extends BaseContainer {
+    public TrunkContainer(String activityName, String className, String desc) {
+        super(activityName, className, desc);
+        AdbLeafSetting.startSocketServer();
+    }
+
     public TrunkContainer(String activityName, String className) {
-        super(activityName, className);
+        this(activityName, className, "");
     }
 
     public TrunkContainer(String className) {
-        super(className, className);
+        this(className, className, "");
     }
 
     @Override

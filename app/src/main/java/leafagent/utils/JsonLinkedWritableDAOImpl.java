@@ -77,6 +77,11 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     }
 
     @Override
+    public String getJsonArray() {
+        return gson.toJson(arrayChildren.toArray());
+    }
+
+    @Override
     public void update(BaseInfo newInfo) {
         arrayChildren.set(arrayChildren.indexOf(newInfo), newInfo);
         System.out.println(gson.toJson(arrayChildren.toArray()));
@@ -94,12 +99,14 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
 
     @Override
     public void save() {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
-            bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
-            bufferedWriter.flush();
-        } catch (Exception e) {
-            System.out.println(e);
+        if (!path.isEmpty()) {
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
+                bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
+                bufferedWriter.flush();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }
 }

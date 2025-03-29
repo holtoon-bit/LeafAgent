@@ -14,7 +14,6 @@ abstract public class AgentClassVisitorFactory implements AsmClassVisitorFactory
 
     @Override
     public @NotNull ClassVisitor createClassVisitor(ClassContext classContext, ClassVisitor nextClassVisitor) {
-//        AdbLeafSetting.setting();
         if (classContext.getCurrentClassData().getSuperClasses().contains("androidx.appcompat.app.AppCompatActivity")) {
             return new ActivityBranchVisitor(nextClassVisitor);
         }

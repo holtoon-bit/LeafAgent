@@ -2,11 +2,11 @@ package leafagent.info;
 
 import leafagent.plugin.CreatedContainers;
 import leafagent.utils.JsonWriter;
-import leafagent.utils.LogWriter;
+import leafagent.utils.LogWritable;
 
 public class BaseContainer {
     protected BaseInfo info;
-    private LogWriter writer;
+    private LogWritable writer;
 
     public BaseContainer() {
         writer = new JsonWriter("logg.json");
@@ -31,7 +31,7 @@ public class BaseContainer {
                 .build();
     }
 
-    public LogWriter getWriter() {
+    public LogWritable getWriter() {
         return writer;
     }
 
@@ -41,12 +41,12 @@ public class BaseContainer {
 
     public void startTime() {
         info.setStartMillis(System.currentTimeMillis());
-        getWriter().writeLeaf(info);
+        writer.writeLeaf(info);
     }
 
     public void endTime() {
         info.setEndMillis(System.currentTimeMillis());
-        getWriter().updateLeaf(info);
+        writer.updateLeaf(info);
         CreatedContainers.remove(info.getName(), info.getClassName());
     }
 

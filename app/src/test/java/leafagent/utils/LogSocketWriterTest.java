@@ -3,7 +3,7 @@ package leafagent.utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class LogWriterTest {
+class LogSocketWriterTest {
 
     @Test
     void setProjectPath() {
@@ -11,11 +11,11 @@ class LogWriterTest {
         String path = "newPath";
 
         // when
-        LogWriter.setProjectPath(path);
+        LogSocketWriter.setProjectPath(path);
 
         // then
-        Assertions.assertNotNull(LogWriter.getProjectPath());
-        Assertions.assertEquals(LogWriter.getProjectPath(), path);
+        Assertions.assertNotNull(LogSocketWriter.getProjectPath());
+        Assertions.assertEquals(LogSocketWriter.getProjectPath(), path);
     }
 
     @Test
@@ -24,9 +24,9 @@ class LogWriterTest {
         String path = "newPath1";
 
         // when
-        LogWriter.setProjectPath(path);
+        LogSocketWriter.setProjectPath(path);
 
         // then
-        Assertions.assertTrue(LogWriter.isHaveProjectPath());
+        Assertions.assertTrue(LogSocketWriter.isHaveProjectPath());
     }
 }

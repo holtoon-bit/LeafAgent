@@ -9,6 +9,7 @@ public interface LogWritableRepository {
     void insert(BaseInfo info);
     BaseInfo get(int id);
     LinkedList<BaseInfo> getAll();
+    String getJsonArray();
     void update(BaseInfo info);
     void remove(BaseInfo info);
     void removeAll();
