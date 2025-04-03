@@ -1,6 +1,6 @@
 package leafagent.utils;
 
-public abstract class LogSocketWriter implements LogWritable {
+public abstract class LogWriter implements LogWritable {
     static private String projectPath = "";
 
     public static void setProjectPath(String path) {
@@ -13,8 +13,5 @@ public abstract class LogSocketWriter implements LogWritable {
 
     public static boolean isHaveProjectPath() {
         return !projectPath.isEmpty();
-    }
-
-    protected void sendLeafStructure(String structure) {
     }
 }

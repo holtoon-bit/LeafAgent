@@ -10,7 +10,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 public class ActivityLeafVisitor extends LeafVisitor {
-
     @Internal
     public static final String COST_CREATE_NAME = "onCreate";
     @Internal
@@ -157,7 +156,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
 
     @Override
     public void visitInsn(int opcode) {
-        if (opcode == Opcodes.RETURN && !methodName.equals(COST_INIT_NAME)) {
+        if (opcode <= Opcodes.RETURN && opcode >= Opcodes.IRETURN) {
             if (methodName.equals(COST_START_NAME)
                     || methodName.equals(COST_STOP_NAME)
                     || methodName.equals(COST_CREATE_NAME)) {

@@ -4,4 +4,4 @@ plugins {
 }
 
 rootProject.name = 'LeafAgent'
-include('app')
+include('agent')

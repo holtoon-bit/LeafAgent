@@ -1,5 +1,4 @@
 plugins {
-    id 'application'
     id 'maven-publish'
     id 'java-gradle-plugin'
 }
@@ -13,7 +12,6 @@ repositories {
 dependencies {
     implementation libs.gradle.api
 	implementation libs.gson
-	implementation libs.sqlite.jdbc
     testImplementation libs.junit
     testRuntimeOnly libs.junit.engine
 }
@@ -28,16 +26,12 @@ java {
     }
 }
 
-application {
-    mainClass = "leafagent.TestCode"
-}
-
 group = 'leafagent'
 version = '1.0.0'
 
 gradlePlugin {
     plugins {
-        greeting {
+        leafagent {
             id = 'leafagent.plugin'
             implementationClass = 'leafagent.plugin.LeafPlugin'
         }
@@ -51,11 +45,11 @@ publishing {
         }
     }
     repositories {
-//        mavenLocal()
-        maven {
-            name = 'localPluginRepository'
-            url = uri("${buildDir}/repos")
-        }
+        mavenLocal()
+//        maven {
+//            name = 'localPluginRepository'
+//            url = uri("${buildDir}/repos")
+//        }
     }
 }
 

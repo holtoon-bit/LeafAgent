@@ -164,7 +164,8 @@ public class LeafVisitor extends MethodVisitor {
 
     @Override
     public void visitInsn(int opcode) {
-        if (opcode == Opcodes.RETURN && (isInjected || COST_INIT_NAME.equals(methodName) || lambdaInjected.contains(methodName + desc))) {
+        if (opcode <= Opcodes.RETURN && opcode >= Opcodes.IRETURN
+                && (isInjected || COST_INIT_NAME.equals(methodName) || lambdaInjected.contains(methodName + desc))) {
             beforeReturn();
         }
         super.visitInsn(opcode);

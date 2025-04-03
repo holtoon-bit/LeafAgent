@@ -4,7 +4,7 @@ import leafagent.info.BaseInfo;
 
 import java.util.Collection;
 
-public class JsonWriter extends LogSocketWriter {
+public class JsonWriter extends LogWriter {
     private final LogWritableRepository jsonRepository;
 
     public JsonWriter(String name) {
@@ -23,13 +23,10 @@ public class JsonWriter extends LogSocketWriter {
     @Override
     public void writeLeaf(BaseInfo info) {
         jsonRepository.insert(info);
-        sendLeafStructure(getStringStruct());
     }
 
     @Override
-    public void updateLeaf(BaseInfo info) {
-        // add method
-    }
+    public void updateLeaf(BaseInfo info) {}
 
     @Override
     public Collection<BaseInfo> getStruct() {
