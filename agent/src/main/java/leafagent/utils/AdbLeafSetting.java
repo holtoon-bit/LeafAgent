@@ -4,12 +4,20 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Setting the ADB connect.
+ */
 public class AdbLeafSetting {
     public final static int LOCAL_PORT = 8338;
     public final static int REMOTE_PORT = 8787;
 
     private static Thread currentThread;
 
+    /**
+     * Setting a redirect of the TCP connect between mobile device and device for development.
+     *
+     * @return {@code boolean} is correct redirect.
+     */
     public static boolean forward() {
         return Objects.requireNonNull(runFunction("adb", "devices", "-l")).contains("product:")
                 && runFunction("adb", "forward", "tcp:" + LOCAL_PORT, "tcp:" + REMOTE_PORT) != null;
@@ -45,6 +53,9 @@ public class AdbLeafSetting {
         return null;
     }
 
+    /**
+     * Start a server for exchange data between devices.
+     */
     public static void startSocketServer() {
         if (currentThread == null) {
             currentThread = new Thread(() -> {

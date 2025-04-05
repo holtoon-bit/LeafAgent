@@ -5,6 +5,9 @@ import leafagent.info.BaseInfo;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * Interface for the repository class that creates the Leaf Log.
+ */
 public interface LogWritableRepository {
     void insert(BaseInfo info);
     BaseInfo get(int id);

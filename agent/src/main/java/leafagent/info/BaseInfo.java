@@ -1,5 +1,8 @@
 package leafagent.info;
 
+/**
+ * Information about an object with an annotation {@link leafagent.annotations.Branch @Branch} or a method with an annotation {@link leafagent.annotations.Leaf @Leaf}.
+ */
 public class BaseInfo {
     private int id;
     private int parentId;

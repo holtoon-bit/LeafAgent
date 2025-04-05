@@ -4,6 +4,10 @@ import leafagent.info.BaseContainer;
 
 import java.util.HashMap;
 
+/**
+ * Stores all {@link BaseContainer BaseContainer}'s objects,
+ * then calling {@link BaseContainer BaseContainer}'s methods in code.
+ */
 public class CreatedContainers {
     private static final HashMap<String, BaseContainer> createdContainers = new HashMap<>();
 

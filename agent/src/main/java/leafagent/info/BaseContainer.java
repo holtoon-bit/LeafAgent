@@ -4,6 +4,9 @@ import leafagent.plugin.CreatedContainers;
 import leafagent.utils.JsonWriter;
 import leafagent.utils.LogWritable;
 
+/**
+ * Handler of methods and objects for filling {@link BaseInfo BaseInfo}.
+ */
 public class BaseContainer {
     protected BaseInfo info;
     private LogWritable writer;
@@ -39,11 +42,21 @@ public class BaseContainer {
         return info;
     }
 
+     /**
+     * It is called when the method/object starts working.
+     * <br><br>
+     * Set startMillis in {@link BaseInfo BaseInfo} and write information in object extended by {@link LogWritable LogWritable}.
+     */
     public void startTime() {
         info.setStartMillis(System.currentTimeMillis());
         writer.writeLeaf(info);
     }
 
+    /**
+     * It is called when the method/object stops working.
+     * <br><br>
+     * Set endMillis in {@link BaseInfo BaseInfo} and update information in object extended by {@link LogWritable LogWritable}.
+     */
     public void endTime() {
         info.setEndMillis(System.currentTimeMillis());
         writer.updateLeaf(info);

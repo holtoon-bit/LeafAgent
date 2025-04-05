@@ -11,6 +11,9 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/**
+ * DAO class to create the Leaf Log using the JSON format.
+ */
 public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     public static final String KEY_THREAD_NAME = "newThread";
 
@@ -25,6 +28,10 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
         gson = new Gson();
     }
 
+    /**
+     * Add {@link BaseInfo BaseInfo } about called method.
+     * @param info {@link BaseInfo BaseInfo}
+     */
     @Override
     public void create(BaseInfo info) {
         info.setId(arrayChildren.size()+1);
@@ -66,37 +73,60 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
         System.out.println(gson.toJson(arrayChildren.toArray()));
     }
 
+    /**
+     * Get {@link BaseInfo BaseInfo} by {@code id} from the Leaf Log.
+     * @param id {@link Integer int}
+     * @return {@link BaseInfo BaseInfo}
+     */
     @Override
     public BaseInfo get(int id) {
         return arrayChildren.get(id-1);
     }
 
+    /**
+     * Get {@link LinkedList LinkedList} with all {@link BaseInfo BaseInfo} from the Leaf Log.
+     */
     @Override
     public LinkedList<BaseInfo> getAll() {
         return arrayChildren;
     }
 
+    /**
+     * Get {@code JSON} with all {@link BaseInfo BaseInfo} from the Leaf Log.
+     * @return {@link String String} using the JSON format.
+     */
     @Override
     public String getJsonArray() {
         return gson.toJson(arrayChildren.toArray());
     }
 
+    /**
+     * Update value {@link BaseInfo BaseInfo} by {@code id} from {@code newInfo}
+     * @param newInfo value {@link BaseInfo BaseInfo} with updated params, except {@code id}.
+     */
     @Override
     public void update(BaseInfo newInfo) {
         arrayChildren.set(arrayChildren.indexOf(newInfo), newInfo);
         System.out.println(gson.toJson(arrayChildren.toArray()));
     }
 
+    /**
+     * Remove {@link BaseInfo BaseInfo}.
+     */
     @Override
-    public void remove(BaseInfo info) {
+    public void remove(BaseInfo info) {}
 
-    }
-
+    /**
+     * Clear the Leaf log.
+     */
     @Override
     public void removeAll() {
         arrayChildren.clear();
     }
 
+    /**
+     * Save the Leaf Log to local storage.
+     */
     @Override
     public void save() {
         if (!path.isEmpty()) {

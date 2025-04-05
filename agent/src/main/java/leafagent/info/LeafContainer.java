@@ -1,12 +1,6 @@
 package leafagent.info;
 
-public class LeafContainer extends BaseContainer {
-    public LeafContainer(String name, String className) {super(name, className);}
-
-    public LeafContainer(String name, String className, String description) {super(name, className, description);}
-
-    @Override
-    public void endTime() {
-        super.endTime();
-    }
-}
+/**
+ * Handler for a method with an annotation {@link leafagent.annotations.Leaf @Leaf}.
+ */
+public class LeafContainer extends BaseContainer {}
