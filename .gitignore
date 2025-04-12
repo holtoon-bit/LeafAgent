@@ -7,3 +7,6 @@ java/leafagent/TestCode.java
 java/leafagent/TestClass.java
 java/leafagent/TestClass1.java
 /app/src/test/resources/logTest.json
+/.vscode/
+/.javadoc/
+/.idea/

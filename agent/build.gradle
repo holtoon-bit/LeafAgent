@@ -46,11 +46,5 @@ publishing {
     }
     repositories {
         mavenLocal()
-//        maven {
-//            name = 'localPluginRepository'
-//            url = uri("${buildDir}/repos")
-//        }
     }
 }
-
-tasks.withType(Copy).all { duplicatesStrategy 'exclude' }
