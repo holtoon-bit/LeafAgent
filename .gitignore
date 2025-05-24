@@ -10,3 +10,6 @@ java/leafagent/TestClass1.java
 /.vscode/
 /.javadoc/
 /.idea/
+/gradle.properties
+/keystore.jks
+/secring.gpg
