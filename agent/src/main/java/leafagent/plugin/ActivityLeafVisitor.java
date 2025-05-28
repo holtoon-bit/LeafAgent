@@ -40,7 +40,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     @Override
     public void visitCode() {
         switch (methodName) {
-            case COST_START_NAME, COST_STOP_NAME -> afterBranchStart();
+            case COST_START_NAME, COST_STOP_NAME, COST_DESTROY_NAME -> afterBranchStart();
             case COST_CREATE_NAME -> intoOnCreateActivity();
             case COST_INIT_NAME -> intoInitActivity();
             default -> super.visitCode();
@@ -207,14 +207,16 @@ public class ActivityLeafVisitor extends LeafVisitor {
         if (opcode <= Opcodes.RETURN && opcode >= Opcodes.IRETURN) {
             if (methodName.equals(COST_START_NAME)
                     || methodName.equals(COST_STOP_NAME)
-                    || methodName.equals(COST_CREATE_NAME)) {
+                    || methodName.equals(COST_CREATE_NAME)
+                    || methodName.equals(COST_DESTROY_NAME)) {
                 beforeReturn();
-            } else if (methodName.equals(COST_DESTROY_NAME)) {
-                beforeDestroyReturn();
             } else {
                 super.visitInsn(opcode);
             }
         }
+        // else if (methodName.equals(COST_DESTROY_NAME)) {
+        //                beforeDestroyReturn();
+        //            }
         mv.visitInsn(opcode);
     }
 }

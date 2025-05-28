@@ -1,5 +1,5 @@
 # LeafAgent
-[![javadoc](https://javadoc.io/badge2/leafagent/agent/javadoc.svg)](https://javadoc.io/doc/leafagent/agent)<br><br>
+[![javadoc](https://javadoc.io/badge2/io.github.holtoon-bit/leafagent/javadoc.svg)](https://javadoc.io/doc/io.github.holtoon-bit/leafagent)<br><br>
 **LeafAgent** — это фреймворк, позволяющий получать сведенья о порядке выполнения частей кода android-приложения (отслеживать события activity, создание объектов, вызовы методов и прочее). LeafAgent составляет дерево вызовов на основе порядка выполнения методов.
 
 LeafAgent можно использовать для выявления багов, анализирования порядка выполнения методов, получения информации о состоянии процессов и т.д. LeafAgent помогает быстрее находить и исправлять баги, выявленные пользователями в момент работы с android-приложением.
@@ -9,7 +9,7 @@ LeafAgent можно использовать для выявления баго
 	1.1.[Пример работы](#example)<br>
 	1.2. [Устройство](#how-it-works)
 2. [Начать пользоваться](#get-start)
-3. [Leaf Plugin - плагин для Android Studio](#leaf-plugin)
+3. [LeafPlugin - плагин для Android Studio](#leaf-plugin)
 4. [Пример Android-приложения](#code-example)
 
 ## 1. Принцип работы<a id="work"></a>
@@ -24,19 +24,23 @@ LeafAgent строит дерево вызовов сохраняемое на �
 ## 2. Начать пользоваться<a id="get-start"></a>
 
 **Javadoc документация:**<br>
-[leafagent.agent - javadoc](https://javadoc.io/doc/leafagent/agent)
+[leafagent.agent - javadoc](https://javadoc.io/doc/io.github.holtoon-bit/leafagent)
 
 **Минимальные требования:**<br>
-Версия Java: 17
+Версия Java: 21
 
-**Установить фреймворк**
+**Установить фреймворк**<br>
+Доступен на Central Sonatype: [io.github.holtoon-bit/leafagent](https://central.sonatype.com/artifact/io.github.holtoon-bit/leafagent)<br>
 **gradle.build:**
 ```
 plugin {
-	id "leafagent.plugin" version("1.0.0")
+	id "io.github.holtoon-bit.leafagent.plugin" version("1.0.3")
+}
+repositories {
+	mavenCentral()
 }
 dependencies { 
-	implementation "leafagent.agent:1.0.0"
+	implementation 'io.github.holtoon-bit:leafagent:1.0.3'
 }
 ```
 
@@ -44,10 +48,11 @@ dependencies {
 Аннотируйте те участки кода, которые хотите отслеживать.
 Для классов используйте аннотацию `@Branch`, для их методов `@Leaf`. Если вы отмечаете метод в классе, то сам класс обязательно должен быть аннотирован `@Branch`.
 
-## 3. Leaf Plugin - плагин для Android Studio<a id="leaf-plugin"></a>
-Для удобной работы с LeafAgent в Android Studio необходимо установить Leaf Plugin.<br>
+## 3. LeafPlugin - плагин для Android Studio<a id="leaf-plugin"></a>
+Для удобной работы с LeafAgent в Android Studio необходимо установить LeafPlugin.<br>
+Jetbrains Marketplace: https://plugins.jetbrains.com/plugin/27070-leaf <br>
 Репозиторий плагина: [holtoon-bit/LeafPluginIdea](https://github.com/holtoon-bit/LeafPluginIdea).
 
 ## 4. Пример Android-приложения<a id="code-example"></a>
 Для более легкого старта в освоение LeafAgent, воспользуйтесь реальным примером android-приложения с демонстрацией возможностей плагина. Ознакомиться с примером можно по ссылке: [holtoon-bit/LeafAgent-Android-example](https://github.com/holtoon-bit/LeafAgent-Android-example).
-Не забудьте ознакомиться с [Leaf Plugin](#leaf-plugin) для удобства работы с LeafAgent.
+Не забудьте ознакомиться с [LeafPlugin](#leaf-plugin) для удобства работы с LeafAgent.
