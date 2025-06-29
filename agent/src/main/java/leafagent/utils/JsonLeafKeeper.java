@@ -1,27 +1,25 @@
 package leafagent.utils;
 
 import leafagent.info.BaseInfo;
-
 import java.util.Collection;
 import java.util.LinkedList;
 
 /**
  * Class to create the Leaf Log using the JSON format.
  */
-public class JsonWriter extends LogWriter {
-    private final LogWritableRepository jsonRepository;
+public class JsonLeafKeeper implements LeafKeepable {
+    private final LeafKeepableRepository jsonRepository;
 
-    public JsonWriter(String name) {
-        jsonRepository = createRepository(name);
+    public JsonLeafKeeper() {
+        jsonRepository = createRepository();
     }
 
+    /**
+     * Create new object implementing {@link LeafKeepableRepository}.
+     */
     @Override
-    public LogWritableRepository createRepository(String name) {
-        String path = "";
-        if (!name.isEmpty()) {
-            path = getProjectPath() + "/" + name;
-        }
-        return new JsonWritableRepositoryImpl(path);
+    public LeafKeepableRepository createRepository() {
+        return new JsonLeafKeepableRepositoryImpl();
     }
 
     /**
@@ -29,7 +27,7 @@ public class JsonWriter extends LogWriter {
      * @param info {@link BaseInfo BaseInfo}
      */
     @Override
-    public void writeLeaf(BaseInfo info) {
+    public void insertLeaf(BaseInfo info) {
         jsonRepository.insert(info);
     }
 
@@ -45,7 +43,7 @@ public class JsonWriter extends LogWriter {
     }
 
     /**
-     * Get {@code JSON} with all {@link BaseInfo BaseInfo} from the Leaf Log.
+     * Get {@code JSON} with all {@link BaseInfo BaseInfo} for all the time from the Leaf Log.
      * @return {@link String String} using the JSON format.
      */
     @Override
@@ -54,18 +52,20 @@ public class JsonWriter extends LogWriter {
     }
 
     /**
+     * Get the Leaf structure for any {@link BaseInfo}.
+     * @param info {@link BaseInfo}
+     * @return {@link String}
+     */
+    @Override
+    public String getJsonFor(BaseInfo info) {
+        return jsonRepository.getJsonFor(info);
+    }
+
+    /**
      * Clear the Leaf log.
      */
     @Override
     public void clear() {
         jsonRepository.removeAll();
-    }
-
-    /**
-     * Save the Leaf Log to local storage.
-     */
-    @Override
-    public void save() {
-        jsonRepository.save();
     }
 }

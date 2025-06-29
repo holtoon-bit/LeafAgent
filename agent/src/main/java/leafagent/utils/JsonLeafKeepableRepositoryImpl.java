@@ -1,17 +1,16 @@
 package leafagent.utils;
 
 import leafagent.info.BaseInfo;
-
 import java.util.LinkedList;
 
 /**
  * Repository class to create the Leaf Log using the JSON format.
  */
-public class JsonWritableRepositoryImpl implements LogWritableRepository {
-    private LogWritableDAO dao;
+public class JsonLeafKeepableRepositoryImpl implements LeafKeepableRepository {
+    private final LeafKeepableDAO dao;
 
-    public JsonWritableRepositoryImpl(String path) {
-        dao = new JsonLinkedWritableDAOImpl(path);
+    public JsonLeafKeepableRepositoryImpl() {
+        dao = new JsonLeafKeepableDAOImpl();
     }
 
     /**
@@ -74,10 +73,12 @@ public class JsonWritableRepositoryImpl implements LogWritableRepository {
     public void removeAll() {dao.removeAll();}
 
     /**
-     * Save the Leaf Log to local storage.
+     * Get the Leaf structure for any {@link BaseInfo}.
+     * @param info {@link BaseInfo}
+     * @return {@link String}
      */
     @Override
-    public void save() {
-        dao.save();
+    public String getJsonFor(BaseInfo info) {
+        return dao.getJsonFor(info);
     }
 }

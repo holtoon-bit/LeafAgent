@@ -7,21 +7,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+class JsonLeafKeepableDAOImplTest {
 
-class JsonLinkedWritableDAOImplTest {
-    private static String path;
-
-    private static JsonLinkedWritableDAOImpl dao;
+    private static JsonLeafKeepableDAOImpl dao;
 
     @BeforeAll
     public static void setPath() {
-        path = new File("src/test/resources/logTest.json").getAbsolutePath();
-        dao = new JsonLinkedWritableDAOImpl(path);
+        dao = new JsonLeafKeepableDAOImpl();
     }
 
     @BeforeEach

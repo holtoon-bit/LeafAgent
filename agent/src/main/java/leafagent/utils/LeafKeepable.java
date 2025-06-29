@@ -1,22 +1,21 @@
 package leafagent.utils;
 
 import leafagent.info.BaseInfo;
-
 import java.util.Collection;
 
 /**
  * Interface for the class that creates the Leaf Log.
  */
-public interface LogWritable {
+public interface LeafKeepable {
     /**
-     * Create new object implementing {@link LogWritableRepository}.
+     * Create new object implementing {@link LeafKeepableRepository}.
      */
-    LogWritableRepository createRepository(String name);
+    LeafKeepableRepository createRepository();
     /**
-     * Write new {@link BaseInfo} info.
+     * Insert new {@link BaseInfo} info.
      * @param info - new {@link BaseInfo} info.
      */
-    void writeLeaf(BaseInfo info);
+    void insertLeaf(BaseInfo info);
     /**
      * Update Leaf in the Leaf Log.
      * @param info updated Leaf info.
@@ -33,11 +32,13 @@ public interface LogWritable {
      */
     String getStringStruct();
     /**
+     * Get the Leaf structure for any {@link BaseInfo}.
+     * @param info {@link BaseInfo}
+     * @return {@link String}
+     */
+    String getJsonFor(BaseInfo info);
+    /**
      * Delete all {@link BaseInfo} from the Leaf structure.
      */
     void clear();
-    /**
-     * Save the Leaf structure.
-     */
-    void save();
 }

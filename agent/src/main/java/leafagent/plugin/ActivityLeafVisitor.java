@@ -4,14 +4,14 @@ import leafagent.info.BaseContainer;
 import leafagent.info.BranchContainer;
 import leafagent.info.LeafContainer;
 import leafagent.info.TrunkContainer;
-import leafagent.utils.JsonWriter;
+import leafagent.utils.LeafWriter;
 import org.gradle.api.tasks.Internal;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 /**
- * {@link LeafVisitor LeafVisitor} for the methods from activity.
+ * {@link LeafVisitor} for the methods from activity.
  */
 public class ActivityLeafVisitor extends LeafVisitor {
     @Internal
@@ -41,7 +41,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     public void visitCode() {
         switch (methodName) {
             case COST_START_NAME, COST_STOP_NAME, COST_DESTROY_NAME -> afterBranchStart();
-            case COST_CREATE_NAME -> intoOnCreateActivity();
+            case COST_CREATE_NAME -> intoOnCreate();
             case COST_INIT_NAME -> intoInitActivity();
             default -> super.visitCode();
         }
@@ -56,7 +56,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     /**
-     * Create an object of {@link TrunkContainer TrunkContainer} in this class.
+     * Create an object of {@link TrunkContainer} in this class.
      *
      * @param activityName activity name.
      * @param className class name.
@@ -82,7 +82,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     /**
-     * Calling a {@link TrunkContainer#startTime() TrunkContainer.startTime()} to start this class.
+     * Calling a {@link TrunkContainer#startTime()} to start this class.
      *
      * @param activityName activity name.
      * @param className class name.
@@ -107,7 +107,15 @@ public class ActivityLeafVisitor extends LeafVisitor {
     /**
      * Add methods to start observation of {@code onCreate}.
      */
-    private void intoOnCreateActivity() {
+    private void intoOnCreate() {
+        callSetProjectPath();
+        afterBranchStart();
+    }
+
+    /**
+     * Set {@code projectPath} for {@link LeafWriter}.
+     */
+    private void callSetProjectPath() {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
@@ -125,12 +133,11 @@ public class ActivityLeafVisitor extends LeafVisitor {
         );
         mv.visitMethodInsn(
                 Opcodes.INVOKESTATIC,
-                Type.getInternalName(JsonWriter.class),
+                Type.getInternalName(LeafWriter.class),
                 "setProjectPath",
                 "("+Type.getDescriptor(String.class)+")V",
                 false
         );
-        afterBranchStart();
     }
 
     /**
@@ -142,7 +149,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     /**
-     * Create an object of {@link BranchContainer BranchContainer} in this method.
+     * Create an object of {@link BranchContainer} in this method.
      *
      * @param leafName method name.
      * @param className class name.
@@ -168,7 +175,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     /**
-     * Calling a {@link BranchContainer#startTime() BranchContainer.startTime()} in this method.
+     * Calling a {@link BranchContainer#startTime()} in this method.
      *
      * @param leafName method name.
      * @param className class name.
@@ -191,7 +198,7 @@ public class ActivityLeafVisitor extends LeafVisitor {
     }
 
     /**
-     * Calling a {@link LeafContainer#endTime() LeafContainer.endTime()} of destroy this class.
+     * Calling a {@link LeafContainer#endTime()} of destroy this class.
      */
     private void beforeDestroyReturn() {
         addLeafEndTime(activityName, className);
@@ -214,9 +221,6 @@ public class ActivityLeafVisitor extends LeafVisitor {
                 super.visitInsn(opcode);
             }
         }
-        // else if (methodName.equals(COST_DESTROY_NAME)) {
-        //                beforeDestroyReturn();
-        //            }
         mv.visitInsn(opcode);
     }
 }

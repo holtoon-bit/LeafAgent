@@ -6,6 +6,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
     gradlePluginPortal()
     google()
 }
@@ -28,7 +29,7 @@ java {
 }
 
 group = 'io.github.holtoon-bit'
-version = '1.0.3'
+version = '1.0.5'
 
 gradlePlugin {
     plugins {

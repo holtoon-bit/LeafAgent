@@ -1,18 +1,19 @@
 package leafagent.info;
 
 import leafagent.plugin.CreatedContainers;
-import leafagent.utils.JsonWriter;
-import leafagent.utils.LogWritable;
+import leafagent.utils.JsonLeafKeeper;
+import leafagent.utils.LeafKeepable;
+import leafagent.utils.LeafWriter;
 
 /**
  * Handler of methods and objects for filling {@link BaseInfo BaseInfo}.
  */
 public class BaseContainer {
     protected BaseInfo info;
-    private LogWritable writer;
+    private LeafKeepable keeper;
 
     public BaseContainer() {
-        writer = new JsonWriter("logg.json");
+        keeper = new JsonLeafKeeper();
     }
 
     public BaseContainer(String name, String className) {
@@ -34,8 +35,8 @@ public class BaseContainer {
                 .build();
     }
 
-    public LogWritable getWriter() {
-        return writer;
+    public LeafKeepable getKeeper() {
+        return keeper;
     }
 
     public BaseInfo getInfo() {
@@ -45,22 +46,23 @@ public class BaseContainer {
      /**
      * It is called when the method/object starts working.
      * <br><br>
-     * Set startMillis in {@link BaseInfo BaseInfo} and write information in object extended by {@link LogWritable LogWritable}.
+     * Set startMillis in {@link BaseInfo BaseInfo} and write information in object extended by {@link LeafKeepable}.
      */
     public void startTime() {
         info.setStartMillis(System.currentTimeMillis());
-        writer.writeLeaf(info);
+        keeper.insertLeaf(info);
     }
 
     /**
      * It is called when the method/object stops working.
      * <br><br>
-     * Set endMillis in {@link BaseInfo BaseInfo} and update information in object extended by {@link LogWritable LogWritable}.
+     * Set endMillis in {@link BaseInfo BaseInfo} and update information in object extended by {@link LeafKeepable}.
      */
     public void endTime() {
         info.setEndMillis(System.currentTimeMillis());
-        writer.updateLeaf(info);
+        keeper.updateLeaf(info);
         CreatedContainers.remove(info.getName(), info.getClassName());
+        LeafWriter.writeLeaf(keeper.getJsonFor(info));
     }
 
     @Override

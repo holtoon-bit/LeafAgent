@@ -10,18 +10,18 @@ import java.net.Socket;
  * Using after {@link AdbLeafSetting#forward() AdbLeafSetting.forward()} to connect to the developer's device.
  */
 public class AdbLeafServer extends ServerSocket {
-    private final LogWritable leafWriter;
+    private final LeafKeepable leafKeeper;
 
     public AdbLeafServer() throws IOException {
         super(AdbLeafSetting.REMOTE_PORT);
-        leafWriter = new JsonWriter("");
+        leafKeeper = new JsonLeafKeeper();
     }
 
     public void start() throws IOException {
         while (!isClosed()) {
             Socket client = accept();
             PrintWriter writer = new PrintWriter(client.getOutputStream(), true);
-            writer.write(leafWriter.getStringStruct());
+            writer.write(leafKeeper.getStringStruct());
             writer.println();
             writer.close();
             client.close();

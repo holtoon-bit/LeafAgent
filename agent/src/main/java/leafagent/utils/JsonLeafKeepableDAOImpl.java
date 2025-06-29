@@ -4,28 +4,22 @@ import com.google.gson.Gson;
 import leafagent.info.BaseInfo;
 import leafagent.plugin.LeafVisitor;
 import org.objectweb.asm.Type;
-
-import java.io.File;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
  * DAO class to create the Leaf Log using the JSON format.
  */
-public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
+public class JsonLeafKeepableDAOImpl implements LeafKeepableDAO {
     public static final String KEY_THREAD_NAME = "newThread";
 
-    private String path;
-    private Gson gson;
+    private final Gson gson;
 
-    private static LinkedList<BaseInfo> arrayChildren = new LinkedList<>();
-    private static HashMap<String, Integer> threadsId = new HashMap<>();
+    private static final LinkedList<BaseInfo> arrayChildren = new LinkedList<>();
+    private static final HashMap<String, Integer> threadsId = new HashMap<>();
 
-    public JsonLinkedWritableDAOImpl(String path) {
-        this.path = path;
-        gson = new Gson();
+    public JsonLeafKeepableDAOImpl() {
+        this.gson = new Gson();
     }
 
     /**
@@ -70,7 +64,6 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
             }
         }
         arrayChildren.add(info);
-        System.out.println(gson.toJson(arrayChildren.toArray()));
     }
 
     /**
@@ -107,7 +100,6 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
     @Override
     public void update(BaseInfo newInfo) {
         arrayChildren.set(arrayChildren.indexOf(newInfo), newInfo);
-        System.out.println(gson.toJson(arrayChildren.toArray()));
     }
 
     /**
@@ -124,19 +116,8 @@ public class JsonLinkedWritableDAOImpl implements LogWritableDAO {
         arrayChildren.clear();
     }
 
-    /**
-     * Save the Leaf Log to local storage.
-     */
     @Override
-    public void save() {
-        if (!path.isEmpty()) {
-            try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
-                bufferedWriter.write(gson.toJson(arrayChildren.toArray()));
-                bufferedWriter.flush();
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
+    public String getJsonFor(BaseInfo info) {
+        return gson.toJson(info);
     }
 }

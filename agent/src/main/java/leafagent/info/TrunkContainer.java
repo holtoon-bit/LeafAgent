@@ -25,11 +25,10 @@ public class TrunkContainer extends BaseContainer {
     }
 
     /**
-     * Override {@link BaseContainer#endTime() endTime()} and save the Leaf Log to local device using {@link leafagent.utils.LogWritable LogWriter}.
+     * Override {@link BaseContainer#endTime() endTime()} and save the Leaf Log to local device using {@link leafagent.utils.LeafKeepable}.
      */
     @Override
     public void endTime() {
-        getWriter().save();
         super.endTime();
     }
 }

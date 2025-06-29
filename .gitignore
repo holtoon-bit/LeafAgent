@@ -13,3 +13,4 @@ java/leafagent/TestClass1.java
 /gradle.properties
 /keystore.jks
 /secring.gpg
+/agent/src/test/resources/

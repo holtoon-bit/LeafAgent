@@ -24,29 +24,48 @@ LeafAgent строит дерево вызовов сохраняемое на �
 ## 2. Начать пользоваться<a id="get-start"></a>
 
 **Javadoc документация:**<br>
-[leafagent.agent - javadoc](https://javadoc.io/doc/io.github.holtoon-bit/leafagent)
+https://javadoc.io/doc/io.github.holtoon-bit/leafagent
 
 **Минимальные требования:**<br>
-Версия Java: 21
+Версия Java: 17
 
-**Установить фреймворк**<br>
-Доступен на Central Sonatype: [io.github.holtoon-bit/leafagent](https://central.sonatype.com/artifact/io.github.holtoon-bit/leafagent)<br>
-**gradle.build:**
+### Установить фреймворк
+Доступен на Central Sonatype:<br> https://central.sonatype.com/artifact/io.github.holtoon-bit/leafagent<br>
+
+**gradle.build(:app):**
 ```
 plugin {
-	id "io.github.holtoon-bit.leafagent.plugin" version("1.0.3")
-}
-repositories {
-	mavenCentral()
+	id "io.github.holtoon-bit.leafagent.plugin" version("1.0.5")
 }
 dependencies { 
-	implementation 'io.github.holtoon-bit:leafagent:1.0.3'
+	implementation 'io.github.holtoon-bit:leafagent:1.0.5'
+}
+```
+**settings.gradle:**
+```
+pluginManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
 }
 ```
 
-**Добавить аннотации**<br>
+### Добавить аннотации
 Аннотируйте те участки кода, которые хотите отслеживать.
 Для классов используйте аннотацию `@Branch`, для их методов `@Leaf`. Если вы отмечаете метод в классе, то сам класс обязательно должен быть аннотирован `@Branch`.
+
+### Обработать появление бага
+Если пользователь найдет баг и решит сообщить вам (разработчику), в таком случае, вы можете реализовать необходимый функционал для "репорта", то есть способ получить и отправить сведенья о пользование приложением за последний день.<br>
+Получите "карты" Leaf в android-приложение следующим способом:
+```
+File[] leafs = LeafWriter.getLeafFiles();
+```
+Так вы получите массив файлов, который, например, можно отправить на ваш сервер, чтобы обнаружить причины появления бага и исправить его.
 
 ## 3. LeafPlugin - плагин для Android Studio<a id="leaf-plugin"></a>
 Для удобной работы с LeafAgent в Android Studio необходимо установить LeafPlugin.<br>
@@ -54,5 +73,5 @@ Jetbrains Marketplace: https://plugins.jetbrains.com/plugin/27070-leaf <br>
 Репозиторий плагина: [holtoon-bit/LeafPluginIdea](https://github.com/holtoon-bit/LeafPluginIdea).
 
 ## 4. Пример Android-приложения<a id="code-example"></a>
-Для более легкого старта в освоение LeafAgent, воспользуйтесь реальным примером android-приложения с демонстрацией возможностей плагина. Ознакомиться с примером можно по ссылке: [holtoon-bit/LeafAgent-Android-example](https://github.com/holtoon-bit/LeafAgent-Android-example).
+Для более легкого старта в освоение LeafAgent, воспользуйтесь примером android-приложения с демонстрацией возможностей плагина. Ознакомиться с примером можно по ссылке: [holtoon-bit/LeafAgent-Android-example](https://github.com/holtoon-bit/LeafAgent-Android-example).<br>
 Не забудьте ознакомиться с [LeafPlugin](#leaf-plugin) для удобства работы с LeafAgent.
